@@ -1,10 +1,9 @@
-pragma solidity ^0.4.24;
 contract Owner{
 
-    address owner;
+    address a;
 
     modifier onlyOwner(){
-        require(msg.sender == owner);
+        require(msg.sender == a);
         _;
     }
 
@@ -15,7 +14,7 @@ contract MyContract is Owner{
     mapping(address => uint) balances;
 
     constructor() public{
-        owner = msg.sender;
+        a = msg.sender;
     }
 
     function mint(uint value) onlyOwner public{
