@@ -25,14 +25,16 @@ contract C {
     ERC20 erc20;
     address notsend;
     address sender;
+    uint timelock;
+//    mapping(byte32 => bool) private _balances;
 
-    event eventsend(address, address, uint);
+    event eventsend(address, address, uint256, uint256);
 
-    event eventsend2(address, address, uint);
+    event eventsend2(address, address, uint256, uint256);
 
-    event eventreceive(address, address, uint);
+    event eventreceive(address, address, uint256);
 
-    event eventreceive2(address, address, uint);
+    event eventreceive2(bytes32);
 
     constructor() public {
         erc20 = new ERC20();
@@ -54,29 +56,30 @@ contract C {
 //        int_transferFrom(from_msgsender, to, am);
 //    }
 
-    function send(address from, address to, uint256 am) public payable{
-        if (from == sender)
-        {
-//            if (to == send)
-//            {
-//                return;
-//            }
-         erc20.transferFrom(from, to, am);
-
-        }
-        emit eventsend2(from, to, am);
+    function send(address taint, address from, address to, uint256 am, uint256 dstchain) public payable{
+//        require(timelock > block.timestamp);
+        ERC20(taint).transferFrom(from, to, am);
+        emit eventsend2(from, to, am, dstchain);
 
     }
 
-    function receive(address from, address to, uint256 am) public {
-        if(msg.sender == sender)
-        {
-            erc20.transferFrom(from, to, am);
-            emit eventreceive(from, to, am);
-        }
 
-        emit eventreceive2(from, to, am);
-    }
+//    function receive2(bytes32 _hashedMessage, uint8 _v, bytes32 _r, bytes32 _s) public returns (address) {
+//        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+//        bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
+//        address signer = ecrecover(prefixedHashMessage, _v, _r, _s);
+//        erc20.transferFrom(address(this), signer, 20);
+//        emit eventreceive2(_hashedMessage);
+//        return signer;
+//    }
+
+//    function receive(bytes32 _hashedMessage, address to, uint256 am) public {
+//        if(msg.sender == sender)
+//        {
+//            erc20.transferFrom(address(this), to, am);
+////            emit eventreceive(from, to, am);
+//        }
+//    }
 
 
     // This is not detected

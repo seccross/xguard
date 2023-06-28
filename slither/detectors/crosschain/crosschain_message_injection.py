@@ -34,19 +34,19 @@ class CrosschainMessageInjection(AbstractDetector):
     Missing events for critical contract parameters set by owners and used in access control
     """
 
-    ARGUMENT = "miss-crosschain-data-check"
-    HELP = "Missing crosschain data check on destination chain"
+    ARGUMENT = "crosschain-message-injection"
+    HELP = "Crosschain message injection"
     IMPACT = DetectorClassification.LOW
     CONFIDENCE = DetectorClassification.MEDIUM
 
-    CROSSCHAINSENDSIGLIST = ["send(address,address,uint256)", "send2(address,address,uint256)"]
+    CROSSCHAINSENDSIGLIST = ["send(address,address,address,uint256,uint256)", "send2(address,address,uint256)"]
     CROSSCHAINRECEIVESIGLIST = ["receive(address,address,uint256)", "receive2(address,address,uint256)"]
     CROSSCHAINSENDEVENTLIST = ["eventsend", "eventsend2"]
     CROSSCHAINRECEIVEEVENTLIST = ["eventreceive", "eventreceive2"]
 
     WIKI = "https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-access-control"
-    WIKI_TITLE = "Crosschain message might be reconstructed by event parser"
-    WIKI_DESCRIPTION = "Crosschain message might be reconstructed by event parser"
+    WIKI_TITLE = "Crosschain message injecton"
+    WIKI_DESCRIPTION = "Crosschain message injecton"
 
     # region wiki_exploit_scenario
     WIKI_EXPLOIT_SCENARIO = """
@@ -105,8 +105,8 @@ contract C {
                 for ir in node.irs:
                     if isinstance(ir, HighLevelCall) or isinstance(ir, LowLevelCall):
                         if is_tainted(ir.destination, contract):
-                            if function not in results:
-                                results.append(function)
+                            if (function, node) not in results:
+                                results.append((function, node))
                                 continue
                 if function in results:
                     continue
@@ -178,11 +178,12 @@ contract C {
         # Check derived contracts for missing events
         results = []
 
-        CROSSCHAINSIGLIST = [self.CROSSCHAINRECEIVESIGLIST, self.CROSSCHAINSENDSIGLIST]
+        CROSSCHAINSIGLIST = self.CROSSCHAINRECEIVESIGLIST + self.CROSSCHAINSENDSIGLIST
         for contract in self.compilation_unit.contracts_derived:
             missing_send_events = self._detect_crosschain_message_injection(contract, CROSSCHAINSIGLIST)
-            for function in missing_send_events:
+            for (function, node) in missing_send_events:
                 info: DETECTOR_INFO = ["Cross-Chain Message Injection", function, "\n"]
+                info += ["\t- ", node, " \n"]
                 res = self.generate_result(info)
                 results.append(res)
         return results

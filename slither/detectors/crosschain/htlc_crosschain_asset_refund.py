@@ -31,13 +31,13 @@ from slither.slithir.operations.low_level_call import LowLevelCall
 from slither.utils.output import Output
 
 
-class CrosschainMessageInjection(AbstractDetector):
+class HTLCCrosschainAssetRefund(AbstractDetector):
     """
     Missing events for critical contract parameters set by owners and used in access control
     """
 
-    ARGUMENT = "miss-crosschain-data-check"
-    HELP = "Missing crosschain data check on destination chain"
+    ARGUMENT = "HTLC-crosschain-asset-refund"
+    HELP = "HTLC Crosschain asset refund"
     IMPACT = DetectorClassification.LOW
     CONFIDENCE = DetectorClassification.MEDIUM
 
@@ -45,6 +45,7 @@ class CrosschainMessageInjection(AbstractDetector):
     CROSSCHAINRECEIVESIGLIST = ["receive(address,address,uint256)", "receive2(address,address,uint256)"]
     CROSSCHAINSENDEVENTLIST = ["eventsend", "eventsend2"]
     CROSSCHAINRECEIVEEVENTLIST = ["eventreceive", "eventreceive2"]
+    TIMELOCKANDHASHLOCKRELATEDSTATE = ["timelock", "transfers"]
 
 
 
@@ -76,7 +77,8 @@ contract C {
     @staticmethod
     def _detect_crosschain_asset_refund(
             contract: Contract,
-            crosschainfunctionsig: List
+            crosschainfunctionsig: List,
+            lockset: List
     ) -> List[Tuple[FunctionContract, List[Tuple[Node, StateVariable, Modifier]]]]:
         """
         Detects if critical contract parameters set by owners and used in access control are missing events
@@ -89,28 +91,30 @@ contract C {
         for func in contract.functions_entry_points:
 
             # Skip non-send functions
-            if func.solidity_signature not in crosschainfunctionsig:
+            if func.is_constructor or func.is_protected():
                 continue
 
-            transfer_functions = []
+            transfer_functions = set()
 
             for node in func.nodes:
                 func = node.function
                 for ir in node.irs:
-                    if isinstance(ir, (HighLevelCall, LowLevelCall, Transfer, Send)):
+                    if isinstance(ir, (HighLevelCall, LowLevelCall, LibraryCall, Transfer, Send)):
                         if isinstance(ir, (HighLevelCall)):
                             if isinstance(ir.function, Function):
-                                if ir.function.full_name == "transferFrom(address,address,uint256)":
-                                    if func not in transfer_functions:
-                                        transfer_functions.append(node)
+                                if ir.function.full_name in ["transfer(address,uint256)", "transferFrom(address,address,uint256)"]:
+                                    if node not in transfer_functions:
+                                        transfer_functions.add(node)
+                        elif isinstance(ir, LibraryCall) and ir.function.solidity_signature in ["safeTransfer(address,address,uint256)"]:
+                            transfer_functions.add(node)
                         elif isinstance(ir, (Transfer, Send)):
-                            transfer_functions.append(node)
+                            transfer_functions.add(node)
 
             for transfer_node in transfer_functions:
-                if not any(state for dominator in transfer_node.dominators if dominator.is_conditional() for state in dominator.state_variables_read if state in lockset):
-                     results.append((func, node))
+                if not any(state for dominator in transfer_node.dominators if dominator.is_conditional() for state in dominator.state_variables_read if state.name in lockset):
+                     results.append((func, transfer_node))
 
-            return results
+        return results
 
             # Check for any events in the function and skip if found
             # Note: not checking if event corresponds to critical parameter
@@ -121,9 +125,9 @@ contract C {
 
             # eventSendNodeList = []
             # all_conditional_state_var = function.all_conditional_state_variables_read()
-            potential_process_call = []
-            vulnerable_process_call = []
-            missing_check_process_call = []
+            # potential_process_call = []
+            # vulnerable_process_call = []
+            # missing_check_process_call = []
 
             #             if not len(node.local_variables_read) == 0:
             #                 for var in node.local_variables_read:
@@ -190,11 +194,13 @@ contract C {
         # Check derived contracts for missing events
         results = []
 
-        CROSSCHAINSIGLIST = [self.CROSSCHAINRECEIVESIGLIST, self.CROSSCHAINSENDSIGLIST]
+        CROSSCHAINSIGLIST = self.CROSSCHAINRECEIVESIGLIST + self.CROSSCHAINSENDSIGLIST
         for contract in self.compilation_unit.contracts_derived:
-            missing_send_events = self._detect_crosschain_asset_refund(contract, CROSSCHAINSIGLIST)
-            for function in missing_send_events:
-                info: DETECTOR_INFO = ["crosschain asset refund", function, "\n"]
-                res = self.generate_result(info)
-                results.append(res)
+            missing_send_events = self._detect_crosschain_asset_refund(contract, CROSSCHAINSIGLIST, self.TIMELOCKANDHASHLOCKRELATEDSTATE)
+            if len(missing_send_events):
+                for (function, node) in missing_send_events:
+                    info: DETECTOR_INFO = ["crosschain asset refund", function, "\n"]
+                    info += ["\t- ", node, " \n"]
+                    res = self.generate_result(info)
+                    results.append(res)
         return results

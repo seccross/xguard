@@ -17,6 +17,15 @@ from slither.detectors.abstract_detector import (
     DetectorClassification,
     DETECTOR_INFO,
 )
+
+from slither.slithir.operations import (
+    HighLevelCall,
+    Index,
+    LowLevelCall,
+    Send,
+    SolidityCall,
+    Transfer,
+)
 from slither.slithir.operations.event_call import EventCall
 from slither.slithir.operations import HighLevelCall, LibraryCall
 from slither.slithir.operations.low_level_call import LowLevelCall
@@ -33,7 +42,7 @@ class IncompleteEvent(AbstractDetector):
     IMPACT = DetectorClassification.LOW
     CONFIDENCE = DetectorClassification.MEDIUM
 
-    CROSSCHAINSENDSIGLIST = ["send(address,address,uint256)", "send2(address,address,uint256)"]
+    CROSSCHAINSENDSIGLIST = ["send(address,address,address,uint256,uint256)", "send2(address,address,uint256)"]
     CROSSCHAINRECEIVESIGLIST = ["receive(address,address,uint256)", "receive2(address,address,uint256)"]
     CROSSCHAINSENDEVENTLIST = ["eventsend", "eventsend2"]
 
@@ -64,9 +73,9 @@ contract C {
 
     @staticmethod
     def _detect_incomplete_event(
-        contract: Contract,
-        crosschainsendsiglist: List,
-        crosschaineventlist:List
+            contract: Contract,
+            crosschainsendsiglist: List,
+            crosschaineventlist: List
     ) -> List[Tuple[FunctionContract, List[Tuple[Node, StateVariable, Modifier]]]]:
         """
         Detects if critical contract parameters set by owners and used in access control are missing events
@@ -80,7 +89,7 @@ contract C {
             nodes = []
 
             # Skip non-send functions
-            if not function.solidity_signature in crosschainsendsiglist:
+            if function.solidity_signature not in crosschainsendsiglist:
                 continue
 
             # Check for any events in the function and skip if found
@@ -90,25 +99,60 @@ contract C {
             #     results.append(function)
             #     continue
 
-            eventSendNodeList = []
+            eventSendNodeList = {}
 
             for node in function.nodes:
                 for ir in node.irs:
                     if isinstance(ir, EventCall) and ir.name in crosschaineventlist:
-                        eventSendNodeList.append(node)
+                        eventSendNodeList.update({node: {"sourceToken": "", "sourceUser": "", "sourceAmount": ""}})
 
-            for eventNode in eventSendNodeList:
-                for ir in eventNode.irs:
-                    if isinstance(ir, EventCall) and not any(arg for arg in ir.arguments if (is_tainted(arg, function) or is_dependent(arg, SolidityVariableComposed("msg.sender"), function))):
-                        results.append(function)
+            for eventNode in eventSendNodeList.keys():
+                # 1. check asset type; 2. check from address; 3. check other informations.
+                transfer_functions = set()
+                for dominator in eventNode.dominators:
+                    for ir in dominator.irs:
+                        if isinstance(ir, (HighLevelCall, LowLevelCall, LibraryCall, Transfer, Send)):
+                            if isinstance(ir, (HighLevelCall)):
+                                if isinstance(ir.function, Function):
+                                    if ir.function.full_name in ["transferFrom(address,address,uint256)" ]:
+                                        if dominator not in transfer_functions:
+                                            eventSendNodeList[eventNode]["sourceToken"] = ir.destination
+                                            eventSendNodeList[eventNode]["sourceUser"] = ir.arguments[0]
+                                            eventSendNodeList[eventNode]["sourceAmount"] = ir.arguments[2]
+
+                                            transfer_functions.add(dominator)
+                            elif isinstance(ir, LibraryCall) and ir.function.solidity_signature in [
+                                "safeTransferFrom(address,address,address,uint256)"]:
+                                if dominator not in transfer_functions:
+                                    eventSendNodeList[eventNode]["sourceToken"] = ir.arguments[0]
+                                    eventSendNodeList[eventNode]["sourceUser"] = ir.arguments[1]
+                                    eventSendNodeList[eventNode]["sourceAmount"] = ir.arguments[3]
+                                    transfer_functions.add(dominator)
+                            elif isinstance(ir, (Transfer, Send)):
+                                if dominator not in transfer_functions:
+                                    eventSendNodeList[eventNode]["sourceToken"] = "ETH"
+                                    eventSendNodeList[eventNode]["sourceUser"] = SolidityVariableComposed("msg.sender")
+                                    eventSendNodeList[eventNode]["sourceAmount"] = ir.call_value
+
+                                    transfer_functions.add(dominator)
 
 
+                if eventSendNodeList[eventNode]["sourceToken"] != "":
+                    event_send_flag = [False, False, False]
 
+                    for ir in eventNode.irs:
+                        if isinstance(ir, EventCall):
+                            if any(arg for arg in ir.arguments if is_dependent(arg, eventSendNodeList[eventNode]["sourceToken"], function)):
+                                event_send_flag[0] = True
 
+                            if any(arg for arg in ir.arguments if is_dependent(arg, eventSendNodeList[eventNode]["sourceUser"], function)):
+                                event_send_flag[1] = True
 
+                            if any(arg for arg in ir.arguments if is_dependent(arg, eventSendNodeList[eventNode]["sourceAmount"], function)):
+                                event_send_flag[2] = True
 
-
-
+                    if False in event_send_flag:
+                        results.append((function, eventNode))
 
             # if len(eventSendNodeList) == 0:
             #     if len(function.all_state_variables_written()) != 0 or len(function.external_calls_as_expressions) != 0:
@@ -119,19 +163,12 @@ contract C {
             #         if not any(ir for node in eventSendNode.dominators for ir in node.irs if (isinstance(ir, HighLevelCall) or isinstance(ir, LowLevelCall))):
             #             results.append(function)
 
-
-
-
-
-
             # Ignore constructors and private/internal functions
             # Heuristic-1: functions with critical operations are typically "protected". Skip unprotected functions.
-            if function.is_constructor or not function.is_protected():
-                continue
-
+            # if function.is_constructor or not function.is_protected():
+            #     continue
 
             # Heuristic-2
-
 
             # Heuristic-2: Critical operations are where state variables are written and tainted
             # Heuristic-3: Variables of interest are address type that are used in modifiers i.e. access control
@@ -155,9 +192,11 @@ contract C {
         # Check derived contracts for missing events
         results = []
         for contract in self.compilation_unit.contracts_derived:
-            incomplete_send_events = self._detect_incomplete_event(contract, self.CROSSCHAINSENDSIGLIST, self.CROSSCHAINSENDEVENTLIST)
-            for function in incomplete_send_events:
+            incomplete_send_events = self._detect_incomplete_event(contract, self.CROSSCHAINSENDSIGLIST,
+                                                                   self.CROSSCHAINSENDEVENTLIST)
+            for (function, node) in incomplete_send_events:
                 info: DETECTOR_INFO = ["Incomplete event ", function, "\n"]
+                info += ["\t- ", node, " \n"]
                 res = self.generate_result(info)
                 results.append(res)
         return results

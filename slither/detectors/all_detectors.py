@@ -78,6 +78,9 @@ from .compiler_bugs.reused_base_constructor import ReusedBaseConstructor
 from .operations.missing_events_access_control import MissingEventsAccessControl
 from .crosschain.incorrect_event import IncorrectEvent
 from .crosschain.incomplete_event import IncompleteEvent
+from .crosschain.crosschain_message_injection import CrosschainMessageInjection
+from .crosschain.missing_crosschain_data_check import MissingCrosschainCheck
+from .crosschain.htlc_crosschain_asset_refund import HTLCCrosschainAssetRefund
 from .operations.missing_events_arithmetic import MissingEventsArithmetic
 from .functions.modifier import ModifierDefaultDetection
 from .variables.predeclaration_usage_local import PredeclarationUsageLocal

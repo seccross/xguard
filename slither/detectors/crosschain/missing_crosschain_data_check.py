@@ -39,7 +39,7 @@ class MissingCrosschainCheck(AbstractDetector):
     CONFIDENCE = DetectorClassification.MEDIUM
 
     CROSSCHAINSENDSIGLIST = ["send(address,address,uint256)", "send2(address,address,uint256)"]
-    CROSSCHAINRECEIVESIGLIST = ["receive(address,address,uint256)", "receive2(address,address,uint256)"]
+    CROSSCHAINRECEIVESIGLIST = ["receive(bytes32,address,uint256)", "receive2(bytes32,uint8,bytes32,bytes32)"]
     CROSSCHAINSENDEVENTLIST = ["eventsend", "eventsend2"]
     CROSSCHAINRECEIVEEVENTLIST = ["eventreceive", "eventreceive2"]
 
@@ -98,8 +98,8 @@ contract C {
 
             # eventSendNodeList = []
             # all_conditional_state_var = function.all_conditional_state_variables_read()
-            potential_process_call = []
-            vulnerable_process_call = []
+            potential_process_call = set()
+            vulnerable_process_call = set()
             missing_check_process_call = []
 
             for node in function.nodes:
@@ -108,7 +108,7 @@ contract C {
                         if not len(node.local_variables_read) == 0:
                             for var in node.local_variables_read:
                                 if is_tainted(var, function):
-                                    potential_process_call.append(node)
+                                    potential_process_call.add(node)
             missing_check_process_call = potential_process_call
 
             for call in potential_process_call:
@@ -116,9 +116,9 @@ contract C {
                     if dominator.is_conditional():
                         if len(dominator.state_variables_read) and call in missing_check_process_call:
                             missing_check_process_call.remove(call)
-                            if any(state for state in dominator.state_variables_read if is_tainted(state, contract)):
+                            if any(state for state in dominator.state_variables_read if is_tainted(state, contract, True)):
                                 if not call in vulnerable_process_call:
-                                    vulnerable_process_call.append(call)
+                                    vulnerable_process_call.add(call)
                     else:
                         for ir in dominator.irs:
                             if isinstance(ir, SolidityCall):
