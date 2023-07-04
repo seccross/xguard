@@ -2,8 +2,9 @@
 Module detecting vulnerabilities in crosschain bridges
 
 """
+import copy
 from typing import List, Tuple
-
+from .globalVar import GCROSSCHAINSENDSIGLIST, GCROSSCHAINRECEIVESIGLIST, GCROSSCHAINRECEIVEEVENTLIST, GCROSSCHAINSENDEVENTLIST
 from slither.analyses.data_dependency.data_dependency import is_tainted, is_dependent
 from slither.core.cfg.node import Node
 # from slither.core.declarations.contract import Contract
@@ -38,10 +39,10 @@ class MissingCrosschainCheck(AbstractDetector):
     IMPACT = DetectorClassification.LOW
     CONFIDENCE = DetectorClassification.MEDIUM
 
-    CROSSCHAINSENDSIGLIST = ["send(address,address,uint256)", "send2(address,address,uint256)"]
-    CROSSCHAINRECEIVESIGLIST = ["receive(bytes32,address,uint256)", "receive2(bytes32,uint8,bytes32,bytes32)"]
-    CROSSCHAINSENDEVENTLIST = ["eventsend", "eventsend2"]
-    CROSSCHAINRECEIVEEVENTLIST = ["eventreceive", "eventreceive2"]
+    CROSSCHAINSENDSIGLIST = GCROSSCHAINSENDSIGLIST
+    CROSSCHAINRECEIVESIGLIST = GCROSSCHAINRECEIVESIGLIST
+    CROSSCHAINSENDEVENTLIST = GCROSSCHAINSENDEVENTLIST
+    CROSSCHAINRECEIVEEVENTLIST = GCROSSCHAINRECEIVEEVENTLIST
 
     WIKI = "https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-access-control"
     WIKI_TITLE = "Crosschain message might be reconstructed by event parser"
@@ -109,7 +110,7 @@ contract C {
                             for var in node.local_variables_read:
                                 if is_tainted(var, function):
                                     potential_process_call.add(node)
-            missing_check_process_call = potential_process_call
+            missing_check_process_call = copy.deepcopy(potential_process_call)
 
             for call in potential_process_call:
                 for dominator in call.dominators:
@@ -179,8 +180,8 @@ contract C {
         # Check derived contracts for missing events
         results = []
         for contract in self.compilation_unit.contracts_derived:
-            missing_send_events = self._detect_missing_crosschain_data_check(contract, self.CROSSCHAINRECEIVESIGLIST, self.CROSSCHAINRECEIVEEVENTLIST)
-            for function in missing_send_events:
+            missing_crosschain_data_checks = self._detect_missing_crosschain_data_check(contract, self.CROSSCHAINRECEIVESIGLIST, self.CROSSCHAINRECEIVEEVENTLIST)
+            for function in missing_crosschain_data_checks:
                 info: DETECTOR_INFO = ["Missing Crosschain Check ", function, "\n"]
                 res = self.generate_result(info)
                 results.append(res)

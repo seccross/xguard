@@ -3,7 +3,7 @@ Module detecting vulnerabilities in crosschain bridges
 
 """
 from typing import List, Tuple
-
+from .globalVar import GCROSSCHAINSENDSIGLIST, GCROSSCHAINRECEIVESIGLIST, GCROSSCHAINRECEIVEEVENTLIST, GCROSSCHAINSENDEVENTLIST
 from slither.analyses.data_dependency.data_dependency import is_tainted, is_dependent
 from slither.core.cfg.node import Node
 # from slither.core.declarations.contract import Contract
@@ -41,10 +41,10 @@ class HTLCCrosschainAssetRefund(AbstractDetector):
     IMPACT = DetectorClassification.LOW
     CONFIDENCE = DetectorClassification.MEDIUM
 
-    CROSSCHAINSENDSIGLIST = ["send(address,address,uint256)", "send2(address,address,uint256)"]
-    CROSSCHAINRECEIVESIGLIST = ["receive(address,address,uint256)", "receive2(address,address,uint256)"]
-    CROSSCHAINSENDEVENTLIST = ["eventsend", "eventsend2"]
-    CROSSCHAINRECEIVEEVENTLIST = ["eventreceive", "eventreceive2"]
+    CROSSCHAINSENDSIGLIST = GCROSSCHAINSENDSIGLIST
+    CROSSCHAINRECEIVESIGLIST = GCROSSCHAINRECEIVESIGLIST
+    CROSSCHAINSENDEVENTLIST = GCROSSCHAINSENDEVENTLIST
+    CROSSCHAINRECEIVEEVENTLIST = GCROSSCHAINRECEIVEEVENTLIST
     TIMELOCKANDHASHLOCKRELATEDSTATE = ["timelock", "transfers"]
 
 
@@ -116,74 +116,7 @@ contract C {
 
         return results
 
-            # Check for any events in the function and skip if found
-            # Note: not checking if event corresponds to critical parameter
 
-            # if not any(ir for node in function.nodes for ir in node.irs if isinstance(ir, EventCall)):
-            #     results.append(function)
-            #     continue
-
-            # eventSendNodeList = []
-            # all_conditional_state_var = function.all_conditional_state_variables_read()
-            # potential_process_call = []
-            # vulnerable_process_call = []
-            # missing_check_process_call = []
-
-            #             if not len(node.local_variables_read) == 0:
-            #                 for var in node.local_variables_read:
-            #                     if is_tainted(var, function):
-            #                         potential_process_call.append(node)
-            # missing_check_process_call = potential_process_call
-            # for call in potential_process_call:
-            #     for dominator in call.dominators:
-            #         if dominator.is_conditional():
-            #             if len(dominator.state_variables_read):
-            #                 missing_check_process_call.remove(call)
-            #                 if any(state for state in dominator.state_variables_read if is_tainted(state, contract)):
-            #                     if not call in vulnerable_process_call:
-            #                         vulnerable_process_call.append(call)
-            #
-            # if len(potential_process_call) or len(missing_check_process_call):
-            #     results.append(function)
-
-            # if isinstance(ir, EventCall) and ir.name in crosschainreceiveeventlist:
-            #     eventSendNodeList.append(node)
-
-            # for eventNode in eventSendNodeList:
-            #     for ir in eventNode.irs:
-            #         if isinstance(ir, EventCall) and not any(arg for arg in ir.arguments if (
-            #                 is_tainted(arg, function) or is_dependent(arg, SolidityVariableComposed("msg.sender"),
-            #                                                           function))):
-            #             results.append(function)
-
-            # if len(eventSendNodeList) == 0:
-            #     if len(function.all_state_variables_written()) != 0 or len(function.external_calls_as_expressions) != 0:
-            #         results.append(function)
-            #     continue
-            # else:
-            #     for eventSendNode in eventSendNodeList:
-            #         if not any(ir for node in eventSendNode.dominators for ir in node.irs if (isinstance(ir, HighLevelCall) or isinstance(ir, LowLevelCall))):
-            #             results.append(function)
-
-            # Ignore constructors and private/internal functions
-            # Heuristic-1: functions with critical operations are typically "protected". Skip unprotected functions.
-            # if function.is_constructor or not function.is_protected():
-            #     continue
-
-            # Heuristic-2
-
-            # Heuristic-2: Critical operations are where state variables are written and tainted
-            # Heuristic-3: Variables of interest are address type that are used in modifiers i.e. access control
-            # Heuristic-4: Critical operations present but no events in the function is not a good practice
-            # for node in function.nodes:
-            #     for sv in node.state_variables_written:
-            #         if is_tainted(sv, function) and sv.type == ElementaryType("address"):
-            #             for mod in function.contract.modifiers:
-            #                 if sv in mod.state_variables_read:
-            #                     nodes.append((node, sv, mod))
-            # if nodes:
-            #     results.append((function, nodes))
-        # return results
 
     def _detect(self) -> List[Output]:
         """Detect missing events for critical contract parameters set by owners and used in access control
@@ -196,9 +129,9 @@ contract C {
 
         CROSSCHAINSIGLIST = self.CROSSCHAINRECEIVESIGLIST + self.CROSSCHAINSENDSIGLIST
         for contract in self.compilation_unit.contracts_derived:
-            missing_send_events = self._detect_crosschain_asset_refund(contract, CROSSCHAINSIGLIST, self.TIMELOCKANDHASHLOCKRELATEDSTATE)
-            if len(missing_send_events):
-                for (function, node) in missing_send_events:
+            htlc_crosschain_asset_refunds = self._detect_crosschain_asset_refund(contract, CROSSCHAINSIGLIST, self.TIMELOCKANDHASHLOCKRELATEDSTATE)
+            if len(htlc_crosschain_asset_refunds):
+                for (function, node) in htlc_crosschain_asset_refunds:
                     info: DETECTOR_INFO = ["crosschain asset refund", function, "\n"]
                     info += ["\t- ", node, " \n"]
                     res = self.generate_result(info)

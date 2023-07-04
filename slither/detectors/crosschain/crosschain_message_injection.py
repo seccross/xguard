@@ -3,7 +3,7 @@ Module detecting vulnerabilities in crosschain bridges
 
 """
 from typing import List, Tuple
-
+from .globalVar import GCROSSCHAINSENDSIGLIST, GCROSSCHAINRECEIVESIGLIST, GCROSSCHAINRECEIVEEVENTLIST, GCROSSCHAINSENDEVENTLIST
 from slither.analyses.data_dependency.data_dependency import is_tainted, is_dependent
 from slither.core.cfg.node import Node
 # from slither.core.declarations.contract import Contract
@@ -39,10 +39,10 @@ class CrosschainMessageInjection(AbstractDetector):
     IMPACT = DetectorClassification.LOW
     CONFIDENCE = DetectorClassification.MEDIUM
 
-    CROSSCHAINSENDSIGLIST = ["send(address,address,address,uint256,uint256)", "send2(address,address,uint256)"]
-    CROSSCHAINRECEIVESIGLIST = ["receive(address,address,uint256)", "receive2(address,address,uint256)"]
-    CROSSCHAINSENDEVENTLIST = ["eventsend", "eventsend2"]
-    CROSSCHAINRECEIVEEVENTLIST = ["eventreceive", "eventreceive2"]
+    CROSSCHAINSENDSIGLIST = GCROSSCHAINSENDSIGLIST
+    CROSSCHAINRECEIVESIGLIST = GCROSSCHAINRECEIVESIGLIST
+    CROSSCHAINSENDEVENTLIST = GCROSSCHAINSENDEVENTLIST
+    CROSSCHAINRECEIVEEVENTLIST = GCROSSCHAINRECEIVEEVENTLIST
 
     WIKI = "https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-access-control"
     WIKI_TITLE = "Crosschain message injecton"
@@ -180,8 +180,8 @@ contract C {
 
         CROSSCHAINSIGLIST = self.CROSSCHAINRECEIVESIGLIST + self.CROSSCHAINSENDSIGLIST
         for contract in self.compilation_unit.contracts_derived:
-            missing_send_events = self._detect_crosschain_message_injection(contract, CROSSCHAINSIGLIST)
-            for (function, node) in missing_send_events:
+            crosschain_message_injections = self._detect_crosschain_message_injection(contract, CROSSCHAINSIGLIST)
+            for (function, node) in crosschain_message_injections:
                 info: DETECTOR_INFO = ["Cross-Chain Message Injection", function, "\n"]
                 info += ["\t- ", node, " \n"]
                 res = self.generate_result(info)

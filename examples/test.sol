@@ -57,7 +57,7 @@ contract C {
 //    }
 
     function send(address taint, address from, address to, uint256 am, uint256 dstchain) public payable{
-//        require(timelock > block.timestamp);
+        require(timelock > block.timestamp)
         ERC20(taint).transferFrom(from, to, am);
         emit eventsend2(from, to, am, dstchain);
 
@@ -73,13 +73,13 @@ contract C {
 //        return signer;
 //    }
 
-//    function receive(bytes32 _hashedMessage, address to, uint256 am) public {
-//        if(msg.sender == sender)
-//        {
-//            erc20.transferFrom(address(this), to, am);
-////            emit eventreceive(from, to, am);
-//        }
-//    }
+    function receive(bytes32 _hashedMessage, address to, uint256 am) public {
+        if(msg.sender == sender)
+        {
+            erc20.transferFrom(address(this), to, am);
+//            emit eventreceive(from, to, am);
+        }
+    }
 
 
     // This is not detected

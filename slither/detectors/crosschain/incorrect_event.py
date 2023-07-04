@@ -3,7 +3,7 @@ Module detecting vulnerabilities in crosschain bridges
 
 """
 from typing import List, Tuple
-
+from .globalVar import GCROSSCHAINSENDSIGLIST, GCROSSCHAINRECEIVESIGLIST, GCROSSCHAINRECEIVEEVENTLIST, GCROSSCHAINSENDEVENTLIST
 from slither.analyses.data_dependency.data_dependency import is_tainted
 from slither.core.cfg.node import Node
 from slither.core.declarations.contract import Contract
@@ -22,6 +22,9 @@ from slither.slithir.operations.low_level_call import LowLevelCall
 from slither.utils.output import Output
 
 
+
+
+
 class IncorrectEvent(AbstractDetector):
     """
     Missing events for critical contract parameters set by owners and used in access control
@@ -32,11 +35,12 @@ class IncorrectEvent(AbstractDetector):
     IMPACT = DetectorClassification.LOW
     CONFIDENCE = DetectorClassification.MEDIUM
 
-    CROSSCHAINSENDSIGLIST = ["send(address,address,uint256)", "send2(address,address,uint256)"]
-    CROSSCHAINRECEIVESIGLIST = ["receive(address,address,uint256)", "receive2(address,address,uint256)"]
-    CROSSCHAINSENDEVENTLIST = ["eventsend", "eventsend2"]
+    CROSSCHAINSENDSIGLIST = GCROSSCHAINSENDSIGLIST
+    CROSSCHAINRECEIVESIGLIST = GCROSSCHAINRECEIVESIGLIST
+    CROSSCHAINSENDEVENTLIST = GCROSSCHAINSENDEVENTLIST
+    CROSSCHAINRECEIVEEVENTLIST = GCROSSCHAINRECEIVEEVENTLIST
 
-    WIKI = "https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-access-control"
+    WIKI = "https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-event"
     WIKI_TITLE = "An incorrect event emitted in crosschain bridge"
     WIKI_DESCRIPTION = "An incorrect event emitted in crosschain bridge"
 
@@ -141,8 +145,8 @@ contract C {
         # Check derived contracts for missing events
         results = []
         for contract in self.compilation_unit.contracts_derived:
-            missing_send_events = self._detect_incorrect_events(contract, self.CROSSCHAINSENDSIGLIST, self.CROSSCHAINSENDEVENTLIST)
-            for function in missing_send_events:
+            incorrect_events = self._detect_incorrect_events(contract, self.CROSSCHAINSENDSIGLIST, self.CROSSCHAINSENDEVENTLIST)
+            for function in incorrect_events:
                 info: DETECTOR_INFO = ["Incorrect event emit ", function, "\n"]
                 res = self.generate_result(info)
                 results.append(res)
