@@ -6,7 +6,7 @@ from typing import List, Tuple
 from .globalVar import GCROSSCHAINSENDSIGLIST, GCROSSCHAINRECEIVESIGLIST, GCROSSCHAINRECEIVEEVENTLIST, GCROSSCHAINSENDEVENTLIST
 from slither.analyses.data_dependency.data_dependency import is_tainted
 from slither.core.cfg.node import Node
-from slither.core.declarations.contract import Contract
+from slither.core.declarations.contract import Contract, Function
 from slither.core.declarations.function_contract import FunctionContract
 from slither.core.declarations.modifier import Modifier
 from slither.core.solidity_types.elementary_type import ElementaryType
@@ -94,20 +94,42 @@ contract C {
             #     continue
 
             eventSendNodeList = []
+            state_var_written = []
+            external_call = []
 
             for node in function.nodes:
-                for ir in node.irs:
+                slithir_operations = []
+                for internal_call in node.internal_calls:
+                    # Filter to Function, as internal_call can be a solidity call
+                    if isinstance(internal_call, Function):
+                        # for internal_node in internal_call.all_nodes():
+                        #     for read in internal_node.state_variables_read:
+                        #         state_vars_read[read].add(internal_node)
+                        #     for write in internal_node.state_variables_written:
+                        #         state_vars_written[write].add(internal_node)
+                        slithir_operations += internal_call.all_slithir_operations()
+
+                for ir in node.irs + slithir_operations:
                     if isinstance(ir, EventCall) and ir.name in crosschaineventlist:
                         eventSendNodeList.append(node)
+                    if isinstance(ir, HighLevelCall) or isinstance(ir, LowLevelCall):
+                        external_call.append(node)
+                if len(node.state_variables_written):
+                    state_var_written.append(node)
+            # if not len(eventSendNodeList):
+            #     for event in eventSendNodeList:
 
             if len(eventSendNodeList) == 0:
-                if len(function.all_state_variables_written()) != 0 or len(function.external_calls_as_expressions) != 0:
+                if len(function.all_state_variables_written()) != 0 or len(external_call) != 0:
                     results.append(function)
                 continue
+
             else:
                 for eventSendNode in eventSendNodeList:
-                    if not any(ir for node in eventSendNode.dominators for ir in node.irs if (isinstance(ir, HighLevelCall) or isinstance(ir, LowLevelCall))):
+                    if not any(node for node in (eventSendNode.dominators or eventSendNode.dominance_exploration_ordered) if node in state_var_written or node in external_call):
                         results.append(function)
+                    # if not any(ir for node in  for ir in node.irs if (isinstance(ir, HighLevelCall) or isinstance(ir, LowLevelCall))):
+
 
 
 

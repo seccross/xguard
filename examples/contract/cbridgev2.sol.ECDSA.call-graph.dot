@@ -1,0 +1,27 @@
+strict digraph {
+subgraph cluster_1026_ECDSA {
+label = "ECDSA"
+"1026_toEthSignedMessageHash" [label="toEthSignedMessageHash"]
+"1026_recover" [label="recover"]
+"1026_toTypedDataHash" [label="toTypedDataHash"]
+"1026_recover" -> "1026_recover"
+}subgraph cluster_solidity {
+label = "[Solidity]"
+"keccak256(bytes)" 
+"abi.encodePacked()" 
+"byte(uint256,uint256)" 
+"require(bool,string)" 
+"revert(string)" 
+"ecrecover(bytes32,uint8,bytes32,bytes32)" 
+"mload(uint256)" 
+"1026_toEthSignedMessageHash" -> "keccak256(bytes)"
+"1026_recover" -> "require(bool,string)"
+"1026_toTypedDataHash" -> "keccak256(bytes)"
+"1026_toEthSignedMessageHash" -> "abi.encodePacked()"
+"1026_recover" -> "revert(string)"
+"1026_recover" -> "mload(uint256)"
+"1026_recover" -> "byte(uint256,uint256)"
+"1026_recover" -> "ecrecover(bytes32,uint8,bytes32,bytes32)"
+"1026_toTypedDataHash" -> "abi.encodePacked()"
+}
+}

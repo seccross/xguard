@@ -7,6 +7,9 @@
 """
 from collections import defaultdict
 from typing import Optional, Union, Dict, Set, Tuple, Sequence
+import copy
+import networkx as nx
+from slither.detectors.crosschain.globalVar import XGRAPH
 
 from slither.core.declarations import Contract, FunctionContract
 from slither.core.declarations.function import Function
@@ -47,12 +50,14 @@ def _node(node: str, label: Optional[str] = None) -> str:
 
 # pylint: disable=too-many-arguments
 def _process_internal_call(
-    contract: Contract,
-    function: Function,
-    internal_call: Union[Function, SolidityFunction],
-    contract_calls: Dict[Contract, Set[str]],
-    solidity_functions: Set[str],
-    solidity_calls: Set[str],
+        contract: Contract,
+        function: Function,
+        internal_call: Union[Function, SolidityFunction],
+        contract_calls: Dict[Contract, Set[str]],
+        solidity_functions: Set[str],
+        solidity_calls: Set[str],
+        dependency_dict: Dict[str, Set[str]],
+        dependency_graph,
 ) -> None:
     if isinstance(internal_call, (Function)):
         contract_calls[contract].add(
@@ -61,6 +66,14 @@ def _process_internal_call(
                 _function_node(contract, internal_call),
             )
         )
+        if function.name not in dependency_dict:
+            dependency_dict[function.name] = set()
+        if function.name != internal_call.name:
+            dependency_dict[function.name].add(internal_call.name)
+        dependency_graph.add_nodes_from([function.name, internal_call.name])
+        if function.name != internal_call.name:
+            dependency_graph.add_edge(function.name, internal_call.name)
+
     elif isinstance(internal_call, (SolidityFunction)):
         solidity_functions.add(
             _node(_solidity_function_node(internal_call)),
@@ -71,6 +84,13 @@ def _process_internal_call(
                 _solidity_function_node(internal_call),
             )
         )
+        if function.name not in dependency_dict:
+            dependency_dict[function.name] = set()
+        if function.name != internal_call.name:
+            dependency_dict[function.name].add(internal_call.name)
+        dependency_graph.add_nodes_from([function.name, internal_call.name])
+        if function.name != internal_call.name:
+            dependency_graph.add_edge(function.name, internal_call.name)
 
 
 def _render_external_calls(external_calls: Set[str]) -> str:
@@ -78,9 +98,9 @@ def _render_external_calls(external_calls: Set[str]) -> str:
 
 
 def _render_internal_calls(
-    contract: Contract,
-    contract_functions: Dict[Contract, Set[str]],
-    contract_calls: Dict[Contract, Set[str]],
+        contract: Contract,
+        contract_functions: Dict[Contract, Set[str]],
+        contract_calls: Dict[Contract, Set[str]],
 ) -> str:
     lines = []
 
@@ -110,12 +130,14 @@ def _render_solidity_calls(solidity_functions: Set[str], solidity_calls: Set[str
 
 
 def _process_external_call(
-    contract: Contract,
-    function: Function,
-    external_call: Tuple[Contract, Union[Function, Variable]],
-    contract_functions: Dict[Contract, Set[str]],
-    external_calls: Set[str],
-    all_contracts: Set[Contract],
+        contract: Contract,
+        function: Function,
+        external_call: Tuple[Contract, Union[Function, Variable]],
+        contract_functions: Dict[Contract, Set[str]],
+        external_calls: Set[str],
+        all_contracts: Set[Contract],
+        dependency_dict: Dict[str, Set[str]],
+        dependency_graph,
 ) -> None:
     external_contract, external_function = external_call
 
@@ -137,18 +159,27 @@ def _process_external_call(
             _function_node(external_contract, external_function),
         )
     )
+    if function.name not in dependency_dict:
+        dependency_dict[function.name] = set()
+    if function.name != external_function.name:
+        dependency_dict[function.name].add(external_function.name)
+    dependency_graph.add_nodes_from([function.name, external_function.name])
+    if function.name != external_function.name:
+        dependency_graph.add_edge(function.name, external_function.name)
 
 
 # pylint: disable=too-many-arguments
 def _process_function(
-    contract: Contract,
-    function: Function,
-    contract_functions: Dict[Contract, Set[str]],
-    contract_calls: Dict[Contract, Set[str]],
-    solidity_functions: Set[str],
-    solidity_calls: Set[str],
-    external_calls: Set[str],
-    all_contracts: Set[Contract],
+        contract: Contract,
+        function: Function,
+        contract_functions: Dict[Contract, Set[str]],
+        contract_calls: Dict[Contract, Set[str]],
+        solidity_functions: Set[str],
+        solidity_calls: Set[str],
+        external_calls: Set[str],
+        all_contracts: Set[Contract],
+        dependency_dict: Dict[str, Set[str]],
+        dependency_graph
 ) -> None:
     contract_functions[contract].add(
         _node(_function_node(contract, function), function.name),
@@ -162,6 +193,8 @@ def _process_function(
             contract_calls,
             solidity_functions,
             solidity_calls,
+            dependency_dict,
+            dependency_graph,
         )
     for external_call in function.high_level_calls:
         _process_external_call(
@@ -171,10 +204,12 @@ def _process_function(
             contract_functions,
             external_calls,
             all_contracts,
+            dependency_dict,
+            dependency_graph,
         )
 
 
-def _process_functions(functions: Sequence[Function]) -> str:
+def _process_functions(functions: Sequence[Function], dependency_list, dependency_graph) -> str:
     # TODO  add support for top level function
 
     contract_functions: Dict[Contract, Set[str]] = defaultdict(
@@ -202,6 +237,8 @@ def _process_functions(functions: Sequence[Function]) -> str:
                 solidity_calls,
                 external_calls,
                 all_contracts,
+                dependency_list,
+                dependency_graph
             )
 
     render_internal_calls = ""
@@ -222,6 +259,43 @@ class PrinterCallGraph(AbstractPrinter):
     HELP = "Export the call-graph of the contracts to a dot file"
 
     WIKI = "https://github.com/trailofbits/slither/wiki/Printer-documentation#call-graph"
+
+    dependency_relation = {}
+    G = nx.Graph()
+
+    # def find_dependency(self):
+    #     keyList = set()
+    #     queue = []
+    #     child_node_dict = {}
+    #     for key in self.dependency_relation.keys():
+    #         if key not in keyList:
+    #             child_node_dict[key] = copy.deepcopy(self.dependency_relation[key])
+    #             queue.append(list(self.dependency_relation[key]))
+    #             follow_node = queue.pop(0)
+    #             queue.append()
+
+
+
+
+
+
+
+    def process_dict(self, key, keyList: Set[str]):
+        for val in self.dependency_relation[key]:
+            if len(keyList):
+                keyList.add(key)
+            else:
+                keyList = set()
+            if val in self.dependency_relation:
+                if val not in keyList:
+                    self.process_dict(val, keyList)
+                self.dependency_relation[key] = self.dependency_relation[key].union(self.dependency_relation[val])
+
+    def find_dependency(self):
+        keyList = set()
+        for key in self.dependency_relation.keys():
+            if key not in keyList:
+                self.process_dict(key, keyList)
 
     def output(self, filename: str) -> Output:
         """
@@ -256,7 +330,7 @@ class PrinterCallGraph(AbstractPrinter):
             }
             content = "\n".join(
                 ["strict digraph {"]
-                + [_process_functions(list(all_functions_as_dict.values()))]
+                + [_process_functions(list(all_functions_as_dict.values()), self.dependency_relation, XGRAPH)]
                 + ["}"]
             )
             f.write(content)
@@ -267,12 +341,13 @@ class PrinterCallGraph(AbstractPrinter):
             with open(derived_output_filename, "w", encoding="utf8") as f:
                 info += f"Call Graph: {derived_output_filename}\n"
                 content = "\n".join(
-                    ["strict digraph {"] + [_process_functions(derived_contract.functions)] + ["}"]
+                    ["strict digraph {"] + [
+                        _process_functions(derived_contract.functions, self.dependency_relation, XGRAPH)] + ["}"]
                 )
                 f.write(content)
                 results.append((derived_output_filename, content))
 
-        self.info(info)
+        # self.find_dependency()
         res = self.generate_output(info)
         for filename_result, content in results:
             res.add_file(filename_result, content)

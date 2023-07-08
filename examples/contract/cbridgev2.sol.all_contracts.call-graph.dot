@@ -1,0 +1,366 @@
+strict digraph {
+subgraph cluster_1026_ECDSA {
+label = "ECDSA"
+"1026_toEthSignedMessageHash" [label="toEthSignedMessageHash"]
+"1026_recover" [label="recover"]
+"1026_toTypedDataHash" [label="toTypedDataHash"]
+"1026_recover" -> "1026_recover"
+}subgraph cluster_3472_PbBridge {
+label = "PbBridge"
+"3472_decRelay" [label="decRelay"]
+}subgraph cluster_1938_VolumeControl {
+label = "VolumeControl"
+"1938__updateVolume" [label="_updateVolume"]
+"1938_setEpochVolumeCaps" [label="setEpochVolumeCaps"]
+"1938_setEpochLength" [label="setEpochLength"]
+"1938_setEpochLength" -> "1938_onlyGovernor"
+"1938_setEpochVolumeCaps" -> "1938_onlyGovernor"
+}subgraph cluster_21_Context {
+label = "Context"
+"21__msgSender" [label="_msgSender"]
+"21__msgData" [label="_msgData"]
+}subgraph cluster_1045_ISigsVerifier {
+label = "ISigsVerifier"
+"1045_verifySigs" [label="verifySigs"]
+}subgraph cluster_2583_Pool {
+label = "Pool"
+"2583_addLiquidity" [label="addLiquidity"]
+"2583_setMinAdd" [label="setMinAdd"]
+"2583_addNativeLiquidity" [label="addNativeLiquidity"]
+"2583_executeDelayedTransfer" [label="executeDelayedTransfer"]
+"2583_withdraw" [label="withdraw"]
+"2583__sendToken" [label="_sendToken"]
+"2583_setWrap" [label="setWrap"]
+"2583_withdraw" -> "2583_whenNotPaused"
+"2583_withdraw" -> "2583_verifySigs"
+"2583_withdraw" -> "2583__addDelayedTransfer"
+"2583_addNativeLiquidity" -> "2583_whenNotPaused"
+"2583_executeDelayedTransfer" -> "2583__sendToken"
+"2583_executeDelayedTransfer" -> "2583_whenNotPaused"
+"2583_withdraw" -> "2583__updateVolume"
+"2583_addLiquidity" -> "2583_whenNotPaused"
+"2583_addLiquidity" -> "2583_nonReentrant"
+"2583_addNativeLiquidity" -> "2583_nonReentrant"
+"2583_setMinAdd" -> "2583_onlyGovernor"
+"2583_withdraw" -> "2583__sendToken"
+"2583_setWrap" -> "2583_onlyOwner"
+"2583_executeDelayedTransfer" -> "2583__executeDelayedTransfer"
+}subgraph cluster_2593_IWETH {
+label = "IWETH"
+"2593_withdraw" [label="withdraw"]
+"2593_deposit" [label="deposit"]
+}subgraph cluster_548_SafeERC20 {
+label = "SafeERC20"
+"548_safeTransferFrom" [label="safeTransferFrom"]
+"548_safeApprove" [label="safeApprove"]
+"548_safeDecreaseAllowance" [label="safeDecreaseAllowance"]
+"548_safeTransfer" [label="safeTransfer"]
+"548_safeIncreaseAllowance" [label="safeIncreaseAllowance"]
+"548__callOptionalReturn" [label="_callOptionalReturn"]
+"548_safeDecreaseAllowance" -> "548__callOptionalReturn"
+"548_safeApprove" -> "548__callOptionalReturn"
+"548_safeTransferFrom" -> "548__callOptionalReturn"
+"548_safeTransfer" -> "548__callOptionalReturn"
+"548_safeIncreaseAllowance" -> "548__callOptionalReturn"
+}subgraph cluster_3638_PbPool {
+label = "PbPool"
+"3638_decWithdrawMsg" [label="decWithdrawMsg"]
+}subgraph cluster_327_IERC20 {
+label = "IERC20"
+"327_allowance" [label="allowance"]
+"327_totalSupply" [label="totalSupply"]
+"327_balanceOf" [label="balanceOf"]
+"327_transferFrom" [label="transferFrom"]
+"327_transfer" [label="transfer"]
+"327_approve" [label="approve"]
+}subgraph cluster_1482_Signers {
+label = "Signers"
+"1482_verifySigs" [label="verifySigs"]
+"1482_increaseNoticePeriod" [label="increaseNoticePeriod"]
+"1482_updateSigners" [label="updateSigners"]
+"1482__updateSigners" [label="_updateSigners"]
+"1482_notifyResetSigners" [label="notifyResetSigners"]
+"1482__verifySignedPowers" [label="_verifySignedPowers"]
+"1482_resetSigners" [label="resetSigners"]
+"1482_resetSigners" -> "1482__updateSigners"
+"1482_notifyResetSigners" -> "1482_onlyOwner"
+"1482_increaseNoticePeriod" -> "1482_onlyOwner"
+"1482_updateSigners" -> "1482_verifySigs"
+"1482_resetSigners" -> "1482_onlyOwner"
+"1482_verifySigs" -> "1482__verifySignedPowers"
+"1482_updateSigners" -> "1482__updateSigners"
+}subgraph cluster_843_Address {
+label = "Address"
+"843_isContract" [label="isContract"]
+"843_functionCall" [label="functionCall"]
+"843_sendValue" [label="sendValue"]
+"843_functionCallWithValue" [label="functionCallWithValue"]
+"843__verifyCallResult" [label="_verifyCallResult"]
+"843_functionDelegateCall" [label="functionDelegateCall"]
+"843_functionStaticCall" [label="functionStaticCall"]
+"843_functionCall" -> "843_functionCallWithValue"
+"843_functionDelegateCall" -> "843_isContract"
+"843_functionCall" -> "843_functionCall"
+"843_functionDelegateCall" -> "843__verifyCallResult"
+"843_functionCallWithValue" -> "843__verifyCallResult"
+"843_functionStaticCall" -> "843_functionStaticCall"
+"843_functionDelegateCall" -> "843_functionDelegateCall"
+"843_functionCallWithValue" -> "843_isContract"
+"843_functionStaticCall" -> "843_isContract"
+"843_functionCallWithValue" -> "843_functionCallWithValue"
+"843_functionStaticCall" -> "843__verifyCallResult"
+}subgraph cluster_211_Pausable {
+label = "Pausable"
+"211_paused" [label="paused"]
+"211_constructor" [label="constructor"]
+"211__unpause" [label="_unpause"]
+"211__pause" [label="_pause"]
+"211__unpause" -> "211_whenPaused"
+"211__pause" -> "211_whenNotPaused"
+"211__unpause" -> "211__msgSender"
+"211__pause" -> "211__msgSender"
+}subgraph cluster_3288_Pb {
+label = "Pb"
+"3288__uint256" [label="_uint256"]
+"3288_bools" [label="bools"]
+"3288_uint64s" [label="uint64s"]
+"3288_fromBytes" [label="fromBytes"]
+"3288_decVarint" [label="decVarint"]
+"3288_decKey" [label="decKey"]
+"3288_uint32s" [label="uint32s"]
+"3288__addressPayable" [label="_addressPayable"]
+"3288_hasMore" [label="hasMore"]
+"3288_decBytes" [label="decBytes"]
+"3288__bool" [label="_bool"]
+"3288_skipValue" [label="skipValue"]
+"3288_decPacked" [label="decPacked"]
+"3288_cntTags" [label="cntTags"]
+"3288__bytes32" [label="_bytes32"]
+"3288_uint8s" [label="uint8s"]
+"3288__address" [label="_address"]
+"3288_skipValue" -> "3288_decVarint"
+"3288_cntTags" -> "3288_skipValue"
+"3288__address" -> "3288__addressPayable"
+"3288_decPacked" -> "3288_decVarint"
+"3288_decKey" -> "3288_decVarint"
+"3288_cntTags" -> "3288_hasMore"
+"3288_cntTags" -> "3288_decKey"
+"3288_decBytes" -> "3288_decVarint"
+}subgraph cluster_4190_Bridge {
+label = "Bridge"
+"4190_setMinimalMaxSlippage" [label="setMinimalMaxSlippage"]
+"4190__send" [label="_send"]
+"4190_relay" [label="relay"]
+"4190_setMaxSend" [label="setMaxSend"]
+"4190_sendNative" [label="sendNative"]
+"4190_receive" [label="receive"]
+"4190_send" [label="send"]
+"4190_setMinSend" [label="setMinSend"]
+"4190_relay" -> "4190__addDelayedTransfer"
+"4190_sendNative" -> "4190_whenNotPaused"
+"4190_relay" -> "4190_verifySigs"
+"4190_send" -> "4190_nonReentrant"
+"4190_relay" -> "4190__updateVolume"
+"4190_send" -> "4190_whenNotPaused"
+"4190_setMinimalMaxSlippage" -> "4190_onlyGovernor"
+"4190_setMinSend" -> "4190_onlyGovernor"
+"4190_sendNative" -> "4190_nonReentrant"
+"4190_sendNative" -> "4190__send"
+"4190_setMaxSend" -> "4190_onlyGovernor"
+"4190_send" -> "4190__send"
+"4190_relay" -> "4190__sendToken"
+"4190_relay" -> "4190_whenNotPaused"
+}subgraph cluster_1631_Pauser {
+label = "Pauser"
+"1631_addPauser" [label="addPauser"]
+"1631__removePauser" [label="_removePauser"]
+"1631_removePauser" [label="removePauser"]
+"1631_renouncePauser" [label="renouncePauser"]
+"1631_pause" [label="pause"]
+"1631_unpause" [label="unpause"]
+"1631_constructor" [label="constructor"]
+"1631__addPauser" [label="_addPauser"]
+"1631_isPauser" [label="isPauser"]
+"1631_unpause" -> "1631__unpause"
+"1631_removePauser" -> "1631__removePauser"
+"1631_renouncePauser" -> "1631__removePauser"
+"1631_removePauser" -> "1631_onlyOwner"
+"1631_addPauser" -> "1631__addPauser"
+"1631__addPauser" -> "1631_isPauser"
+"1631__removePauser" -> "1631_isPauser"
+"1631_pause" -> "1631__pause"
+"1631_addPauser" -> "1631_onlyOwner"
+"1631_pause" -> "1631_onlyPauser"
+"1631_unpause" -> "1631_onlyPauser"
+"1631_constructor" -> "1631__addPauser"
+}subgraph cluster_2144_DelayedTransfer {
+label = "DelayedTransfer"
+"2144__addDelayedTransfer" [label="_addDelayedTransfer"]
+"2144__executeDelayedTransfer" [label="_executeDelayedTransfer"]
+"2144_setDelayPeriod" [label="setDelayPeriod"]
+"2144_setDelayThresholds" [label="setDelayThresholds"]
+"2144_setDelayPeriod" -> "2144_onlyGovernor"
+"2144_setDelayThresholds" -> "2144_onlyGovernor"
+}subgraph cluster_1761_Governor {
+label = "Governor"
+"1761_addGovernor" [label="addGovernor"]
+"1761_isGovernor" [label="isGovernor"]
+"1761_removeGovernor" [label="removeGovernor"]
+"1761_constructor" [label="constructor"]
+"1761__addGovernor" [label="_addGovernor"]
+"1761__removeGovernor" [label="_removeGovernor"]
+"1761_renounceGovernor" [label="renounceGovernor"]
+"1761__addGovernor" -> "1761_isGovernor"
+"1761_addGovernor" -> "1761__addGovernor"
+"1761_constructor" -> "1761__addGovernor"
+"1761_addGovernor" -> "1761_onlyOwner"
+"1761_removeGovernor" -> "1761__removeGovernor"
+"1761__removeGovernor" -> "1761_isGovernor"
+"1761_renounceGovernor" -> "1761__removeGovernor"
+"1761_removeGovernor" -> "1761_onlyOwner"
+}subgraph cluster_121_Ownable {
+label = "Ownable"
+"121_constructor" [label="constructor"]
+"121_renounceOwnership" [label="renounceOwnership"]
+"121_owner" [label="owner"]
+"121__setOwner" [label="_setOwner"]
+"121_transferOwnership" [label="transferOwnership"]
+"121_renounceOwnership" -> "121__setOwner"
+"121_constructor" -> "121__msgSender"
+"121_transferOwnership" -> "121__setOwner"
+"121_constructor" -> "121__setOwner"
+"121_transferOwnership" -> "121_onlyOwner"
+"121_renounceOwnership" -> "121_onlyOwner"
+}subgraph cluster_250_ReentrancyGuard {
+label = "ReentrancyGuard"
+"250_constructor" [label="constructor"]
+}subgraph cluster_solidity {
+label = "[Solidity]"
+"ecrecover(bytes32,uint8,bytes32,bytes32)" 
+"keccak256(bytes)" 
+"revert()" 
+"mstore(uint256,uint256)" 
+"require(bool)" 
+"revert(uint256,uint256)" 
+"byte(uint256,uint256)" 
+"mload(uint256)" 
+"require(bool,string)" 
+"revert(string)" 
+"balance(address)" 
+"abi.encodeWithSelector()" 
+"abi.encodePacked()" 
+"abi.decode()" 
+"3288__uint256" -> "mload(uint256)"
+"3288__uint256" -> "require(bool)"
+"4190_relay" -> "keccak256(bytes)"
+"1631__removePauser" -> "require(bool,string)"
+"3288_decBytes" -> "mstore(uint256,uint256)"
+"3288__bytes32" -> "require(bool)"
+"2583_withdraw" -> "keccak256(bytes)"
+"1761__removeGovernor" -> "require(bool,string)"
+"843_sendValue" -> "balance(address)"
+"1026_recover" -> "require(bool,string)"
+"4190__send" -> "abi.encodePacked()"
+"2583__sendToken" -> "require(bool,string)"
+"3288__bytes32" -> "mload(uint256)"
+"1482__verifySignedPowers" -> "require(bool,string)"
+"1482__updateSigners" -> "abi.encodePacked()"
+"1482_updateSigners" -> "require(bool,string)"
+"3288_decBytes" -> "mload(uint256)"
+"2144__addDelayedTransfer" -> "require(bool,string)"
+"548_safeTransferFrom" -> "abi.encodeWithSelector()"
+"2144__executeDelayedTransfer" -> "require(bool,string)"
+"4190__send" -> "require(bool,string)"
+"3288_decPacked" -> "require(bool)"
+"1482__updateSigners" -> "require(bool,string)"
+"843_functionStaticCall" -> "require(bool,string)"
+"843_sendValue" -> "require(bool,string)"
+"2583_setMinAdd" -> "require(bool,string)"
+"1482_updateSigners" -> "abi.encodePacked()"
+"3288_decVarint" -> "byte(uint256,uint256)"
+"1026_recover" -> "revert(string)"
+"2583_withdraw" -> "require(bool,string)"
+"843_functionCallWithValue" -> "balance(address)"
+"843_functionDelegateCall" -> "require(bool,string)"
+"548__callOptionalReturn" -> "abi.decode()"
+"3288__addressPayable" -> "mload(uint256)"
+"2583_addNativeLiquidity" -> "require(bool,string)"
+"3288_skipValue" -> "require(bool)"
+"1026_recover" -> "byte(uint256,uint256)"
+"548_safeApprove" -> "require(bool,string)"
+"2583_withdraw" -> "abi.encodePacked()"
+"1026_toEthSignedMessageHash" -> "keccak256(bytes)"
+"1482__verifySignedPowers" -> "revert(string)"
+"1938_setEpochVolumeCaps" -> "require(bool,string)"
+"4190_relay" -> "abi.encodePacked()"
+"548_safeDecreaseAllowance" -> "require(bool,string)"
+"843__verifyCallResult" -> "revert(uint256,uint256)"
+"1482__updateSigners" -> "keccak256(bytes)"
+"1482_increaseNoticePeriod" -> "require(bool,string)"
+"4190_setMinSend" -> "require(bool,string)"
+"2583_addLiquidity" -> "require(bool,string)"
+"548_safeTransfer" -> "abi.encodeWithSelector()"
+"548_safeIncreaseAllowance" -> "abi.encodeWithSelector()"
+"843__verifyCallResult" -> "revert(string)"
+"121_transferOwnership" -> "require(bool,string)"
+"4190_sendNative" -> "require(bool,string)"
+"4190_setMaxSend" -> "require(bool,string)"
+"548__callOptionalReturn" -> "require(bool,string)"
+"1482_resetSigners" -> "require(bool,string)"
+"1482_verifySigs" -> "abi.encodePacked()"
+"1482_updateSigners" -> "keccak256(bytes)"
+"843_functionCallWithValue" -> "require(bool,string)"
+"843__verifyCallResult" -> "mload(uint256)"
+"548_safeDecreaseAllowance" -> "abi.encodeWithSelector()"
+"3288_decVarint" -> "revert()"
+"548_safeApprove" -> "abi.encodeWithSelector()"
+"1938__updateVolume" -> "require(bool,string)"
+"1026_recover" -> "ecrecover(bytes32,uint8,bytes32,bytes32)"
+"4190_relay" -> "require(bool,string)"
+"3288_skipValue" -> "revert()"
+"1026_recover" -> "mload(uint256)"
+"3288_decVarint" -> "mload(uint256)"
+"1026_toTypedDataHash" -> "keccak256(bytes)"
+"1026_toEthSignedMessageHash" -> "abi.encodePacked()"
+"1482_verifySigs" -> "keccak256(bytes)"
+"3288_decBytes" -> "require(bool)"
+"1761__addGovernor" -> "require(bool,string)"
+"1631__addPauser" -> "require(bool,string)"
+"2144_setDelayThresholds" -> "require(bool,string)"
+"4190__send" -> "keccak256(bytes)"
+"1482_verifySigs" -> "require(bool,string)"
+"1026_toTypedDataHash" -> "abi.encodePacked()"
+"3288__addressPayable" -> "require(bool)"
+}"548__callOptionalReturn" -> "843_functionCall"
+"3638_decWithdrawMsg" -> "3288_decBytes"
+"548_safeIncreaseAllowance" -> "327_allowance"
+"3638_decWithdrawMsg" -> "3288__bytes32"
+"3472_decRelay" -> "3288__address"
+"3638_decWithdrawMsg" -> "3288__uint256"
+"548_safeDecreaseAllowance" -> "327_allowance"
+"3638_decWithdrawMsg" -> "3288_decKey"
+"3472_decRelay" -> "3288_decBytes"
+"3472_decRelay" -> "3288_skipValue"
+"4190_send" -> "548_safeTransferFrom"
+"4190_relay" -> "3472_decRelay"
+"2583_addLiquidity" -> "548_safeTransferFrom"
+"2583__sendToken" -> "2593_withdraw"
+"3472_decRelay" -> "3288_hasMore"
+"3638_decWithdrawMsg" -> "3288_decVarint"
+"2583__sendToken" -> "548_safeTransfer"
+"1482__verifySignedPowers" -> "1026_recover"
+"2583_withdraw" -> "3638_decWithdrawMsg"
+"4190_sendNative" -> "2593_deposit"
+"3472_decRelay" -> "3288_decVarint"
+"3472_decRelay" -> "3288_decKey"
+"3638_decWithdrawMsg" -> "3288__address"
+"3472_decRelay" -> "3288_fromBytes"
+"1482_verifySigs" -> "1026_toEthSignedMessageHash"
+"3472_decRelay" -> "3288__bytes32"
+"3472_decRelay" -> "3288__uint256"
+"548_safeApprove" -> "327_allowance"
+"3638_decWithdrawMsg" -> "3288_hasMore"
+"3638_decWithdrawMsg" -> "3288_skipValue"
+"2583_addNativeLiquidity" -> "2593_deposit"
+"3638_decWithdrawMsg" -> "3288_fromBytes"
+}

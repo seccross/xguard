@@ -223,6 +223,7 @@ class Slither(SlitherCore):  # pylint: disable=too-many-instance-attributes
         """
 
         self.load_previous_results()
+        # .output(self._crytic_compile.target).data
         results = [d.detect() for d in self._detectors]
 
         self.write_results_to_hide()

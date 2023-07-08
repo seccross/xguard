@@ -1,6 +1,6 @@
 
 
-pragma solidity 0.5.0;
+//pragma solidity 0.5.0;
 
 //library SafeERC20 {
 //    function safeTransferFrom(IERC20 token, address from, address to, uint256 value) internal {}
@@ -57,9 +57,17 @@ contract C {
 //    }
 
     function send(address taint, address from, address to, uint256 am, uint256 dstchain) public payable{
-        require(timelock > block.timestamp)
+
+        if(taint == sender){
+
+        if(msg.sender == sender)
+        {
         ERC20(taint).transferFrom(from, to, am);
-        emit eventsend2(from, to, am, dstchain);
+            emit eventsend2(from, to, am, dstchain);
+        }
+
+
+        }
 
     }
 

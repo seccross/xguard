@@ -1,0 +1,39 @@
+strict digraph {
+subgraph cluster_843_Address {
+label = "Address"
+"843_isContract" [label="isContract"]
+"843_functionCall" [label="functionCall"]
+"843_sendValue" [label="sendValue"]
+"843_functionCallWithValue" [label="functionCallWithValue"]
+"843__verifyCallResult" [label="_verifyCallResult"]
+"843_functionDelegateCall" [label="functionDelegateCall"]
+"843_functionStaticCall" [label="functionStaticCall"]
+"843_functionCall" -> "843_functionCallWithValue"
+"843_functionDelegateCall" -> "843_isContract"
+"843_functionCall" -> "843_functionCall"
+"843_functionStaticCall" -> "843__verifyCallResult"
+"843_functionDelegateCall" -> "843__verifyCallResult"
+"843_functionCallWithValue" -> "843__verifyCallResult"
+"843_functionStaticCall" -> "843_functionStaticCall"
+"843_functionDelegateCall" -> "843_functionDelegateCall"
+"843_functionStaticCall" -> "843_isContract"
+"843_functionCallWithValue" -> "843_functionCallWithValue"
+"843_functionCallWithValue" -> "843_isContract"
+}subgraph cluster_solidity {
+label = "[Solidity]"
+"revert(uint256,uint256)" 
+"require(bool,string)" 
+"revert(string)" 
+"balance(address)" 
+"mload(uint256)" 
+"843_functionCallWithValue" -> "require(bool,string)"
+"843__verifyCallResult" -> "mload(uint256)"
+"843_sendValue" -> "balance(address)"
+"843__verifyCallResult" -> "revert(uint256,uint256)"
+"843__verifyCallResult" -> "revert(string)"
+"843_functionStaticCall" -> "require(bool,string)"
+"843_functionCallWithValue" -> "balance(address)"
+"843_sendValue" -> "require(bool,string)"
+"843_functionDelegateCall" -> "require(bool,string)"
+}
+}

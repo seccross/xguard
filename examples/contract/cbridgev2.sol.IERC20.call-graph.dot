@@ -1,0 +1,13 @@
+strict digraph {
+subgraph cluster_327_IERC20 {
+label = "IERC20"
+"327_allowance" [label="allowance"]
+"327_totalSupply" [label="totalSupply"]
+"327_balanceOf" [label="balanceOf"]
+"327_transferFrom" [label="transferFrom"]
+"327_transfer" [label="transfer"]
+"327_approve" [label="approve"]
+}subgraph cluster_solidity {
+label = "[Solidity]"
+}
+}
