@@ -8,12 +8,12 @@ import networkx as nx
 #     ST
 #     global CROSSCHAINRECEIVEEVENTLI
 
-
+XGRAPH = nx.Graph()
     # For Polygon
-# GCROSSCHAINSENDSIGLIST = ["lockTokens(address,address,address,bytes)"]
-# GCROSSCHAINRECEIVESIGLIST = ["exitTokens(address,address,bytes)", "receive2(address,address,uint256)"]
-# GCROSSCHAINSENDEVENTLIST = ["LockedEther", "eventsend2"]
-# GCROSSCHAINRECEIVEEVENTLIST = ["ExitedEther", "eventreceive2"]
+GCROSSCHAINSENDSIGLIST = ["lockTokens(address,address,address,bytes)"]
+GCROSSCHAINRECEIVESIGLIST = ["exitTokens(address,address,bytes)", "receive2(address,address,uint256)"]
+GCROSSCHAINSENDEVENTLIST = ["LockedEther", "eventsend2"]
+GCROSSCHAINRECEIVEEVENTLIST = ["ExitedEther", "eventreceive2"]
 
 
 
@@ -22,13 +22,34 @@ import networkx as nx
 # GCROSSCHAINRECEIVESIGLIST = ["relay(bytes,bytes[],address[],uint256[])"]
 # GCROSSCHAINSENDEVENTLIST = ["Send"]
 # GCROSSCHAINRECEIVEEVENTLIST = ["Relay"]
-# XGRAPH = nx.Graph()
+
+
+ # For Harmony
+GCROSSCHAINSENDSIGLIST = ["lockTokens(address,uint256,address)", "lockTokenFor(address,address,uint256,address)"]
+GCROSSCHAINRECEIVESIGLIST = ["unlockToken(address,uint256,address,bytes32)"]
+GCROSSCHAINSENDEVENTLIST = ["Locked"]
+GCROSSCHAINRECEIVEEVENTLIST = ["Unlocked"]
+
+# For layerzero
+
+GCROSSCHAINSENDSIGLIST = ["send(uint16,bytes,bytes,address,address, bytes)", ]
+GCROSSCHAINRECEIVESIGLIST = ["receivePayload(uint16,bytes,address,uint64,uint,bytes)"]
+# GCROSSCHAINSENDEVENTLIST = ["Locked"]
+# GCROSSCHAINRECEIVEEVENTLIST = ["Unlocked"]
+
+# For Meter.io
+
+GCROSSCHAINSENDSIGLIST = ["send(uint16,bytes,bytes,address,address, bytes)", ]
+GCROSSCHAINRECEIVESIGLIST = ["receivePayload(uint16,bytes,address,uint64,uint,bytes)"]
+# GCROSSCHAINSENDEVENTLIST = ["Locked"]
+# GCROSSCHAINRECEIVEEVENTLIST = ["Unlocked"]
+
     #
-GCROSSCHAINSENDSIGLIST = ["send(address,address,address,uint256,uint256)", "sendNative(address,uint256,uint64,uint64,uint32)"]
-GCROSSCHAINRECEIVESIGLIST = ["relay(bytes,bytes[],address[],uint256[])"]
-GCROSSCHAINSENDEVENTLIST = ["eventsend2"]
-GCROSSCHAINRECEIVEEVENTLIST = ["Relay"]
-XGRAPH = nx.Graph()
+# GCROSSCHAINSENDSIGLIST = ["send(address,address,address,uint256,uint256)", "sendNative(address,uint256,uint64,uint64,uint32)"]
+# GCROSSCHAINRECEIVESIGLIST = ["relay(bytes,bytes[],address[],uint256[])"]
+# GCROSSCHAINSENDEVENTLIST = ["eventsend2"]
+# GCROSSCHAINRECEIVEEVENTLIST = ["Relay"]
+# XGRAPH = nx.Graph()
 
 # def get_crosschain_send_sig_list():
 #     return CROSSCHAINSENDSIGLIST

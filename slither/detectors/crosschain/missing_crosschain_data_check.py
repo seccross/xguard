@@ -5,7 +5,8 @@ Module detecting vulnerabilities in crosschain bridges
 import copy
 import networkx as nx
 from typing import List, Tuple
-from .globalVar import GCROSSCHAINSENDSIGLIST, GCROSSCHAINRECEIVESIGLIST, GCROSSCHAINRECEIVEEVENTLIST, GCROSSCHAINSENDEVENTLIST, XGRAPH
+from .globalVar import GCROSSCHAINSENDSIGLIST, GCROSSCHAINRECEIVESIGLIST, GCROSSCHAINRECEIVEEVENTLIST, \
+    GCROSSCHAINSENDEVENTLIST, XGRAPH
 from slither.analyses.data_dependency.data_dependency import is_tainted, is_dependent
 from slither.core.cfg.node import Node
 # from slither.core.declarations.contract import Contract
@@ -322,7 +323,7 @@ contract C {
     @staticmethod
     def _detect_missing_crosschain_data_check(
             contract: Contract,
-            crosschainreceivesiglist:List,
+            crosschainreceivesiglist: List,
             crosschainreceiveeventlist: List
     ) -> List[Tuple[FunctionContract, List[Tuple[Node, StateVariable, Modifier]]]]:
         """
@@ -351,45 +352,61 @@ contract C {
 
             # eventSendNodeList = []
             # all_conditional_state_var = function.all_conditional_state_variables_read()
-            potential_process_call = set()
-            vulnerable_process_call = set()
-            missing_check_process_call = []
+            potential_process_call = []
+            vulnerable_process_call = []
+            missing_check_process_call = {}
 
             for node in function.nodes:
-                for ir in node.irs:
+                slithir_operation = []
+                for inter_call in node.internal_calls:
+                    if isinstance(inter_call, Function):
+                        slithir_operation += inter_call.all_slithir_operations()
+
+                for ir in node.irs + slithir_operation:
                     if isinstance(ir, HighLevelCall) or isinstance(ir, LowLevelCall):
                         if not len(node.local_variables_read) == 0:
                             for var in node.local_variables_read:
-                                if is_tainted(var, function):
-                                    potential_process_call.add(node)
-                for internal_call in node.internal_calls:
-                    if isinstance(internal_call, Function):
-                        for internal_node in internal_call.all_nodes():
-                            if len(internal_node.high_level_calls) or len(internal_node.low_level_calls):
-                                potential_process_call.add(node)
+                                if is_tainted(var, function) and node not in potential_process_call:
+                                    potential_process_call.append(node)
+                # for internal_call in node.internal_calls:
+                #     if isinstance(internal_call, Function):
+                #         for internal_node in internal_call.all_nodes():
+                #             if len(internal_node.high_level_calls) or len(internal_node.low_level_calls):
+                #                 potential_process_call.add(node)
 
-            missing_check_process_call = copy.deepcopy(potential_process_call)
+            # missing_check_process_call = copy.deepcopy(potential_process_call)
+
+            # while len(potential_process_call) > 0:
+            #     potential_process_call_len = len(potential_process_call)
 
             for call in potential_process_call:
+                if call not in missing_check_process_call:
+                    missing_check_process_call[call] = False
                 for dominator in call.dominators:
                     if dominator.is_conditional():
-                        if len(dominator.state_variables_read) and call in missing_check_process_call:
-                            missing_check_process_call.remove(call)
-                            if any(state for state in dominator.state_variables_read if is_tainted(state, contract, True)):
-                                if not call in vulnerable_process_call:
-                                    vulnerable_process_call.add(call)
-                    else:
-                        for ir in dominator.irs:
-                            if isinstance(ir, SolidityCall) or isinstance(ir, InternalCall):
-                                if nx.has_path(XGRAPH,  function.name, "ecrecover(bytes32,uint8,bytes32,bytes32)") and call in missing_check_process_call:
+                        if len(dominator.state_variables_read) and not any(
+                                state for state in dominator.state_variables_read if is_tainted(state, contract, True)):
+                            # if call in missing_check_process_call:
+                            missing_check_process_call[call] = True
+                        # if :
+                        #     if not call in vulnerable_process_call:
+                        #         vulnerable_process_call.add(call)
+
+                    for ir in dominator.irs:
+                        if isinstance(ir, SolidityCall) and ir.function == SolidityFunction(
+                                "ecrecover(bytes32,uint8,bytes32,bytes32)"):
+                            if call in missing_check_process_call:
+                                missing_check_process_call[call] = True
+                        if isinstance(ir, InternalCall) and "ecrecover(bytes32,uint8,bytes32,bytes32)" in list(XGRAPH.nodes):
+                            if nx.has_path(XGRAPH, function.name,
+                                           "ecrecover(bytes32,uint8,bytes32,bytes32)") and call in missing_check_process_call:
                                 # if ir.function == SolidityFunction("ecrecover(bytes32,uint8,bytes32,bytes32)") and call in missing_check_process_call:
-                                    missing_check_process_call.remove(call)
+                                if call in missing_check_process_call:
+                                    missing_check_process_call[call] = True
 
-            if len(potential_process_call) or len(missing_check_process_call):
-                results.append(function)
-
-
-
+            for key in missing_check_process_call.keys():
+                if not missing_check_process_call[key]:
+                    results.append(function)
 
                     # if isinstance(ir, EventCall) and ir.name in crosschainreceiveeventlist:
                     #     eventSendNodeList.append(node)
@@ -441,9 +458,10 @@ contract C {
         for derived_contract in self.slither.contracts_derived:
             _process_functions(derived_contract.functions, self.dependency_relation, XGRAPH)
 
-
         for contract in self.compilation_unit.contracts_derived:
-            missing_crosschain_data_checks = self._detect_missing_crosschain_data_check(contract, self.CROSSCHAINRECEIVESIGLIST, self.CROSSCHAINRECEIVEEVENTLIST)
+            missing_crosschain_data_checks = self._detect_missing_crosschain_data_check(contract,
+                                                                                        self.CROSSCHAINRECEIVESIGLIST,
+                                                                                        self.CROSSCHAINRECEIVEEVENTLIST)
             for function in missing_crosschain_data_checks:
                 info: DETECTOR_INFO = ["Missing Crosschain Check ", function, "\n"]
                 res = self.generate_result(info)

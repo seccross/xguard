@@ -1,4 +1,9 @@
-pragma solidity ^0.6.0;
+/**
+ *Submitted for verification at Etherscan.io on 2021-08-17 0xa2a22b46b8df38cd7c55e6bf32ea5a32637cf2b1
+*/
+
+pragma solidity 0.6.4;
+pragma experimental ABIEncoderV2;
 
 
 /**
@@ -520,572 +525,16 @@ abstract contract AccessControl is Context {
     }
 }
 
-/**
- * @dev Interface of the ERC20 standard as defined in the EIP.
- */
-interface IERC20 {
-    /**
-     * @dev Returns the amount of tokens in existence.
-     */
-    function totalSupply() external view returns (uint256);
-
-    /**
-     * @dev Returns the amount of tokens owned by `account`.
-     */
-    function balanceOf(address account) external view returns (uint256);
-
-    /**
-     * @dev Moves `amount` tokens from the caller's account to `recipient`.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * Emits a {Transfer} event.
-     */
-    function transfer(address recipient, uint256 amount) external returns (bool);
-
-    /**
-     * @dev Returns the remaining number of tokens that `spender` will be
-     * allowed to spend on behalf of `owner` through {transferFrom}. This is
-     * zero by default.
-     *
-     * This value changes when {approve} or {transferFrom} are called.
-     */
-    function allowance(address owner, address spender) external view returns (uint256);
-
-    /**
-     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * IMPORTANT: Beware that changing an allowance with this method brings the risk
-     * that someone may use both the old and the new allowance by unfortunate
-     * transaction ordering. One possible solution to mitigate this race
-     * condition is to first reduce the spender's allowance to 0 and set the
-     * desired value afterwards:
-     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-     *
-     * Emits an {Approval} event.
-     */
-    function approve(address spender, uint256 amount) external returns (bool);
-
-    /**
-     * @dev Moves `amount` tokens from `sender` to `recipient` using the
-     * allowance mechanism. `amount` is then deducted from the caller's
-     * allowance.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * Emits a {Transfer} event.
-     */
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-
-    /**
-     * @dev Emitted when `value` tokens are moved from one account (`from`) to
-     * another (`to`).
-     *
-     * Note that `value` may be zero.
-     */
-    event Transfer(address indexed from, address indexed to, uint256 value);
-
-    /**
-     * @dev Emitted when the allowance of a `spender` for an `owner` is set by
-     * a call to {approve}. `value` is the new allowance.
-     */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-}
-
-/**
- * @dev Wrappers over Solidity's arithmetic operations with added overflow
- * checks.
- *
- * Arithmetic operations in Solidity wrap on overflow. This can easily result
- * in bugs, because programmers usually assume that an overflow raises an
- * error, which is the standard behavior in high level programming languages.
- * `SafeMath` restores this intuition by reverting the transaction when an
- * operation overflows.
- *
- * Using this library instead of the unchecked operations eliminates an entire
- * class of bugs, so it's recommended to use it always.
- */
-library SafeMath {
-    /**
-     * @dev Returns the addition of two unsigned integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `+` operator.
-     *
-     * Requirements:
-     * - Addition cannot overflow.
-     */
-    function add(uint256 a, uint256 b) internal pure returns (uint256) {
-        uint256 c = a + b;
-        require(c >= a, "SafeMath: addition overflow");
-
-        return c;
-    }
-
-    /**
-     * @dev Returns the subtraction of two unsigned integers, reverting on
-     * overflow (when the result is negative).
-     *
-     * Counterpart to Solidity's `-` operator.
-     *
-     * Requirements:
-     * - Subtraction cannot overflow.
-     */
-    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        return sub(a, b, "SafeMath: subtraction overflow");
-    }
-
-    /**
-     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on
-     * overflow (when the result is negative).
-     *
-     * Counterpart to Solidity's `-` operator.
-     *
-     * Requirements:
-     * - Subtraction cannot overflow.
-     */
-    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b <= a, errorMessage);
-        uint256 c = a - b;
-
-        return c;
-    }
-
-    /**
-     * @dev Returns the multiplication of two unsigned integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `*` operator.
-     *
-     * Requirements:
-     * - Multiplication cannot overflow.
-     */
-    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
-        // benefit is lost if 'b' is also tested.
-        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
-        if (a == 0) {
-            return 0;
-        }
-
-        uint256 c = a * b;
-        require(c / a == b, "SafeMath: multiplication overflow");
-
-        return c;
-    }
-
-    /**
-     * @dev Returns the integer division of two unsigned integers. Reverts on
-     * division by zero. The result is rounded towards zero.
-     *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
-     * `revert` opcode (which leaves remaining gas untouched) while Solidity
-     * uses an invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     * - The divisor cannot be zero.
-     */
-    function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        return div(a, b, "SafeMath: division by zero");
-    }
-
-    /**
-     * @dev Returns the integer division of two unsigned integers. Reverts with custom message on
-     * division by zero. The result is rounded towards zero.
-     *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
-     * `revert` opcode (which leaves remaining gas untouched) while Solidity
-     * uses an invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     * - The divisor cannot be zero.
-     */
-    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        // Solidity only automatically asserts when dividing by 0
-        require(b > 0, errorMessage);
-        uint256 c = a / b;
-        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
-
-        return c;
-    }
-
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
-     * Reverts when dividing by zero.
-     *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
-     * opcode (which leaves remaining gas untouched) while Solidity uses an
-     * invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     * - The divisor cannot be zero.
-     */
-    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        return mod(a, b, "SafeMath: modulo by zero");
-    }
-
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
-     * Reverts with custom message when dividing by zero.
-     *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
-     * opcode (which leaves remaining gas untouched) while Solidity uses an
-     * invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     * - The divisor cannot be zero.
-     */
-    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b != 0, errorMessage);
-        return a % b;
-    }
-}
-
-/**
- * @dev Implementation of the {IERC20} interface.
- *
- * This implementation is agnostic to the way tokens are created. This means
- * that a supply mechanism has to be added in a derived contract using {_mint}.
- * For a generic mechanism see {ERC20MinterPauser}.
- *
- * TIP: For a detailed writeup see our guide
- * https://forum.zeppelin.solutions/t/how-to-implement-erc20-supply-mechanisms/226[How
- * to implement supply mechanisms].
- *
- * We have followed general OpenZeppelin guidelines: functions revert instead
- * of returning `false` on failure. This behavior is nonetheless conventional
- * and does not conflict with the expectations of ERC20 applications.
- *
- * Additionally, an {Approval} event is emitted on calls to {transferFrom}.
- * This allows applications to reconstruct the allowance for all accounts just
- * by listening to said events. Other implementations of the EIP may not emit
- * these events, as it isn't required by the specification.
- *
- * Finally, the non-standard {decreaseAllowance} and {increaseAllowance}
- * functions have been added to mitigate the well-known issues around setting
- * allowances. See {IERC20-approve}.
- */
-contract ERC20 is Context, IERC20 {
-    using SafeMath for uint256;
-    using Address for address;
-
-    mapping (address => uint256) private _balances;
-
-    mapping (address => mapping (address => uint256)) private _allowances;
-
-    uint256 private _totalSupply;
-
-    string private _name;
-    string private _symbol;
-    uint8 private _decimals;
-
-    /**
-     * @dev Sets the values for {name} and {symbol}, initializes {decimals} with
-     * a default value of 18.
-     *
-     * To select a different value for {decimals}, use {_setupDecimals}.
-     *
-     * All three of these values are immutable: they can only be set once during
-     * construction.
-     */
-    constructor (string memory name, string memory symbol) public {
-        _name = name;
-        _symbol = symbol;
-        _decimals = 18;
-    }
-
-    /**
-     * @dev Returns the name of the token.
-     */
-    function name() public view returns (string memory) {
-        return _name;
-    }
-
-    /**
-     * @dev Returns the symbol of the token, usually a shorter version of the
-     * name.
-     */
-    function symbol() public view returns (string memory) {
-        return _symbol;
-    }
-
-    /**
-     * @dev Returns the number of decimals used to get its user representation.
-     * For example, if `decimals` equals `2`, a balance of `505` tokens should
-     * be displayed to a user as `5,05` (`505 / 10 ** 2`).
-     *
-     * Tokens usually opt for a value of 18, imitating the relationship between
-     * Ether and Wei. This is the value {ERC20} uses, unless {_setupDecimals} is
-     * called.
-     *
-     * NOTE: This information is only used for _display_ purposes: it in
-     * no way affects any of the arithmetic of the contract, including
-     * {IERC20-balanceOf} and {IERC20-transfer}.
-     */
-    function decimals() public view returns (uint8) {
-        return _decimals;
-    }
-
-    /**
-     * @dev See {IERC20-totalSupply}.
-     */
-    function totalSupply() public view override returns (uint256) {
-        return _totalSupply;
-    }
-
-    /**
-     * @dev See {IERC20-balanceOf}.
-     */
-    function balanceOf(address account) public view override returns (uint256) {
-        return _balances[account];
-    }
-
-    /**
-     * @dev See {IERC20-transfer}.
-     *
-     * Requirements:
-     *
-     * - `recipient` cannot be the zero address.
-     * - the caller must have a balance of at least `amount`.
-     */
-    function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
-        _transfer(_msgSender(), recipient, amount);
-        return true;
-    }
-
-    /**
-     * @dev See {IERC20-allowance}.
-     */
-    function allowance(address owner, address spender) public view virtual override returns (uint256) {
-        return _allowances[owner][spender];
-    }
-
-    /**
-     * @dev See {IERC20-approve}.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
-     */
-    function approve(address spender, uint256 amount) public virtual override returns (bool) {
-        _approve(_msgSender(), spender, amount);
-        return true;
-    }
-
-    /**
-     * @dev See {IERC20-transferFrom}.
-     *
-     * Emits an {Approval} event indicating the updated allowance. This is not
-     * required by the EIP. See the note at the beginning of {ERC20};
-     *
-     * Requirements:
-     * - `sender` and `recipient` cannot be the zero address.
-     * - `sender` must have a balance of at least `amount`.
-     * - the caller must have allowance for ``sender``'s tokens of at least
-     * `amount`.
-     */
-    function transferFrom(address sender, address recipient, uint256 amount) public virtual override returns (bool) {
-        _transfer(sender, recipient, amount);
-        _approve(sender, _msgSender(), _allowances[sender][_msgSender()].sub(amount, "ERC20: transfer amount exceeds allowance"));
-        return true;
-    }
-
-    /**
-     * @dev Atomically increases the allowance granted to `spender` by the caller.
-     *
-     * This is an alternative to {approve} that can be used as a mitigation for
-     * problems described in {IERC20-approve}.
-     *
-     * Emits an {Approval} event indicating the updated allowance.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
-     */
-    function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].add(addedValue));
-        return true;
-    }
-
-    /**
-     * @dev Atomically decreases the allowance granted to `spender` by the caller.
-     *
-     * This is an alternative to {approve} that can be used as a mitigation for
-     * problems described in {IERC20-approve}.
-     *
-     * Emits an {Approval} event indicating the updated allowance.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
-     * - `spender` must have allowance for the caller of at least
-     * `subtractedValue`.
-     */
-    function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].sub(subtractedValue, "ERC20: decreased allowance below zero"));
-        return true;
-    }
-
-    /**
-     * @dev Moves tokens `amount` from `sender` to `recipient`.
-     *
-     * This is internal function is equivalent to {transfer}, and can be used to
-     * e.g. implement automatic token fees, slashing mechanisms, etc.
-     *
-     * Emits a {Transfer} event.
-     *
-     * Requirements:
-     *
-     * - `sender` cannot be the zero address.
-     * - `recipient` cannot be the zero address.
-     * - `sender` must have a balance of at least `amount`.
-     */
-    function _transfer(address sender, address recipient, uint256 amount) internal virtual {
-        require(sender != address(0), "ERC20: transfer from the zero address");
-        require(recipient != address(0), "ERC20: transfer to the zero address");
-
-        _beforeTokenTransfer(sender, recipient, amount);
-
-        _balances[sender] = _balances[sender].sub(amount, "ERC20: transfer amount exceeds balance");
-        _balances[recipient] = _balances[recipient].add(amount);
-        emit Transfer(sender, recipient, amount);
-    }
-
-    /** @dev Creates `amount` tokens and assigns them to `account`, increasing
-     * the total supply.
-     *
-     * Emits a {Transfer} event with `from` set to the zero address.
-     *
-     * Requirements
-     *
-     * - `to` cannot be the zero address.
-     */
-    function _mint(address account, uint256 amount) internal virtual {
-        require(account != address(0), "ERC20: mint to the zero address");
-
-        _beforeTokenTransfer(address(0), account, amount);
-
-        _totalSupply = _totalSupply.add(amount);
-        _balances[account] = _balances[account].add(amount);
-        emit Transfer(address(0), account, amount);
-    }
-
-    /**
-     * @dev Destroys `amount` tokens from `account`, reducing the
-     * total supply.
-     *
-     * Emits a {Transfer} event with `to` set to the zero address.
-     *
-     * Requirements
-     *
-     * - `account` cannot be the zero address.
-     * - `account` must have at least `amount` tokens.
-     */
-    function _burn(address account, uint256 amount) internal virtual {
-        require(account != address(0), "ERC20: burn from the zero address");
-
-        _beforeTokenTransfer(account, address(0), amount);
-
-        _balances[account] = _balances[account].sub(amount, "ERC20: burn amount exceeds balance");
-        _totalSupply = _totalSupply.sub(amount);
-        emit Transfer(account, address(0), amount);
-    }
-
-    /**
-     * @dev Sets `amount` as the allowance of `spender` over the `owner`s tokens.
-     *
-     * This is internal function is equivalent to `approve`, and can be used to
-     * e.g. set automatic allowances for certain subsystems, etc.
-     *
-     * Emits an {Approval} event.
-     *
-     * Requirements:
-     *
-     * - `owner` cannot be the zero address.
-     * - `spender` cannot be the zero address.
-     */
-    function _approve(address owner, address spender, uint256 amount) internal virtual {
-        require(owner != address(0), "ERC20: approve from the zero address");
-        require(spender != address(0), "ERC20: approve to the zero address");
-
-        _allowances[owner][spender] = amount;
-        emit Approval(owner, spender, amount);
-    }
-
-    /**
-     * @dev Sets {decimals} to a value other than the default one of 18.
-     *
-     * WARNING: This function should only be called from the constructor. Most
-     * applications that interact with token contracts will not expect
-     * {decimals} to ever change, and may work incorrectly if it does.
-     */
-    function _setupDecimals(uint8 decimals_) internal {
-        _decimals = decimals_;
-    }
-
-    /**
-     * @dev Hook that is called before any transfer of tokens. This includes
-     * minting and burning.
-     *
-     * Calling conditions:
-     *
-     * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-     * will be to transferred to `to`.
-     * - when `from` is zero, `amount` tokens will be minted for `to`.
-     * - when `to` is zero, `amount` of ``from``'s tokens will be burned.
-     * - `from` and `to` are never both zero.
-     *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
-     */
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual { }
-}
-
-/**
- * @dev Extension of {ERC20} that allows token holders to destroy both their own
- * tokens and those that they have an allowance for, in a way that can be
- * recognized off-chain (via event analysis).
- */
-abstract contract ERC20Burnable is Context, ERC20 {
-    /**
-     * @dev Destroys `amount` tokens from the caller.
-     *
-     * See {ERC20-_burn}.
-     */
-    function burn(uint256 amount) public virtual {
-        _burn(_msgSender(), amount);
-    }
-
-    /**
-     * @dev Destroys `amount` tokens from `account`, deducting from the caller's
-     * allowance.
-     *
-     * See {ERC20-_burn} and {ERC20-allowance}.
-     *
-     * Requirements:
-     *
-     * - the caller must have allowance for ``accounts``'s tokens of at least
-     * `amount`.
-     */
-    function burnFrom(address account, uint256 amount) public virtual {
-        uint256 decreasedAllowance = allowance(account, _msgSender()).sub(amount, "ERC20: burn amount exceeds allowance");
-
-        _approve(account, _msgSender(), decreasedAllowance);
-        _burn(account, amount);
-    }
-}
-
+// SPDX-License-Identifier: MIT
 /**
  * @dev Contract module which allows children to implement an emergency stop
  * mechanism that can be triggered by an authorized account.
  *
- * This module is used through inheritance. It will make available the
- * modifiers `whenNotPaused` and `whenPaused`, which can be applied to
- * the functions of your contract. Note that they will not be pausable by
- * simply including this module, only once the modifiers are put in place.
+ * This is a stripped down version of Open zeppelin's Pausable contract.
+ * https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/EnumerableSet.sol
+ *
  */
-contract Pausable is Context {
+contract Pausable {
     /**
      * @dev Emitted when the pause is triggered by `account`.
      */
@@ -1114,157 +563,756 @@ contract Pausable is Context {
 
     /**
      * @dev Modifier to make a function callable only when the contract is not paused.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
      */
     modifier whenNotPaused() {
-        require(!_paused, "Pausable: paused");
+        _whenNotPaused();
         _;
     }
 
+    function _whenNotPaused() private view {
+        require(!_paused, "Pausable: paused");
+    }
+
     /**
-     * @dev Modifier to make a function callable only when the contract is paused.
+     * @dev Modifier to make a function callable only when the contract is not paused.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
      */
     modifier whenPaused() {
-        require(_paused, "Pausable: not paused");
+        _whenPaused();
         _;
+    }
+
+    function _whenPaused() private view {
+        require(_paused, "Pausable: not paused");
     }
 
     /**
      * @dev Triggers stopped state.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
      */
     function _pause() internal virtual whenNotPaused {
         _paused = true;
-        emit Paused(_msgSender());
+        emit Paused(msg.sender);
     }
 
     /**
      * @dev Returns to normal state.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
      */
     function _unpause() internal virtual whenPaused {
         _paused = false;
-        emit Unpaused(_msgSender());
+        emit Unpaused(msg.sender);
     }
 }
 
+// SPDX-License-Identifier: MIT
 /**
- * @dev ERC20 token with pausable token transfers, minting and burning.
+ * @dev Wrappers over Solidity's arithmetic operations with added overflow
+ * checks.
  *
- * Useful for scenarios such as preventing trades until the end of an evaluation
- * period, or having an emergency switch for freezing all token transfers in the
- * event of a large bug.
+ * note that this is a stripped down version of open zeppelin's safemath
+ * https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/math/SafeMath.sol
  */
-abstract contract ERC20Pausable is ERC20, Pausable {
+contract SafeMath {
+
     /**
-     * @dev See {ERC20-_beforeTokenTransfer}.
+     * @dev Returns the subtraction of two unsigned integers, reverting on
+     * overflow (when the result is negative).
+     *
+     * Counterpart to Solidity's `-` operator.
      *
      * Requirements:
-     *
-     * - the contract must not be paused.
+     * - Subtraction cannot overflow.
      */
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override {
-        super._beforeTokenTransfer(from, to, amount);
-
-        require(!paused(), "ERC20Pausable: token transfer while paused");
+    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+        return _sub(a, b, "SafeMath: subtraction overflow");
     }
+
+    /**
+     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on
+     * overflow (when the result is negative).
+     *
+     * Counterpart to Solidity's `-` operator.
+     *
+     * Requirements:
+     * - Subtraction cannot overflow.
+     */
+    function _sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+        require(b <= a, errorMessage);
+        uint256 c = a - b;
+
+        return c;
+    }
+
 }
 
 /**
- * @dev {ERC20} token, including:
- *
- *  - ability for holders to burn (destroy) their tokens
- *  - a minter role that allows for token minting (creation)
- *  - a pauser role that allows to stop all token transfers
- *
- * This contract uses {AccessControl} to lock permissioned functions using the
- * different roles - head to its documentation for details.
- *
- * The account that deploys the contract will be granted the minter and pauser
- * roles, as well as the default admin role, which will let it grant both minter
- * and pauser roles to aother accounts
+    @title Interface for handler contracts that support deposits and deposit executions.
+    @author ChainSafe Systems.
  */
-contract ERC20PresetMinterPauser is Context, AccessControl, ERC20Burnable, ERC20Pausable {
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+interface IDepositExecute {
+    /**
+        @notice It is intended that deposit are made using the Bridge contract.
+        @param destinationChainID Chain ID deposit is expected to be bridged to.
+        @param depositNonce This value is generated as an ID by the Bridge contract.
+        @param depositer Address of account making the deposit in the Bridge contract.
+        @param data Consists of additional data needed for a specific deposit.
+     */
+    function deposit(bytes32 resourceID, uint8 destinationChainID, uint64 depositNonce, address depositer, bytes calldata data) external;
 
     /**
-     * @dev Grants `DEFAULT_ADMIN_ROLE`, `MINTER_ROLE` and `PAUSER_ROLE` to the
-     * account that deploys the contract.
-     *
-     * See {ERC20-constructor}.
+        @notice It is intended that proposals are executed by the Bridge contract.
+        @param data Consists of additional data needed for a specific deposit execution.
      */
-    constructor(string memory name, string memory symbol) public ERC20(name, symbol) {
-        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+    function executeProposal(bytes32 resourceID, bytes calldata data) external;
+}
 
-        _setupRole(MINTER_ROLE, _msgSender());
-        _setupRole(PAUSER_ROLE, _msgSender());
+/**
+    @title Interface for Bridge contract.
+    @author ChainSafe Systems.
+ */
+interface IBridge {
+    /**
+        @notice Exposing getter for {_chainID} instead of forcing the use of call.
+        @return uint8 The {_chainID} that is currently set for the Bridge contract.
+     */
+    function _chainID() external returns (uint8);
+}
+
+/**
+    @title Interface to be used with handlers that support ERC20s and ERC721s.
+    @author ChainSafe Systems.
+ */
+interface IERCHandler {
+    /**
+        @notice Correlates {resourceID} with {contractAddress}.
+        @param resourceID ResourceID to be used when making deposits.
+        @param contractAddress Address of contract to be called when a deposit is made and a deposited is executed.
+     */
+    function setResource(bytes32 resourceID, address contractAddress) external;
+    /**
+        @notice Marks {contractAddress} as mintable/burnable.
+        @param contractAddress Address of contract to be used when making or executing deposits.
+     */
+    function setBurnable(address contractAddress) external;
+    /**
+        @notice Used to manually release funds from ERC safes.
+        @param tokenAddress Address of token contract to release.
+        @param recipient Address to release tokens to.
+        @param amountOrTokenID Either the amount of ERC20 tokens or the ERC721 token ID to release.
+     */
+    function withdraw(address tokenAddress, address recipient, uint256 amountOrTokenID) external;
+
+    function _wtokenAddress() external returns (address);
+
+    /**
+        @notice Used to update the _bridgeAddress
+        @param newBridgeAddress Address of the updated bridge address.
+    */
+    function updateBridgeAddress(address newBridgeAddress) external;
+}
+
+/**
+    @title Interface for handler that handles generic deposits and deposit executions.
+    @author ChainSafe Systems.
+ */
+interface IGenericHandler {
+    /**
+        @notice Correlates {resourceID} with {contractAddress}, {depositFunctionSig}, and {executeFunctionSig}.
+        @param resourceID ResourceID to be used when making deposits.
+        @param contractAddress Address of contract to be called when a deposit is made and a deposited is executed.
+        @param depositFunctionSig Function signature of method to be called in {contractAddress} when a deposit is made.
+        @param depositFunctionDepositerOffset Depositer address position offset in the metadata, in bytes.
+        @param executeFunctionSig Function signature of method to be called in {contractAddress} when a deposit is executed.
+     */
+    function setResource(
+        bytes32 resourceID,
+        address contractAddress,
+        bytes4 depositFunctionSig,
+        uint depositFunctionDepositerOffset,
+        bytes4 executeFunctionSig) external;
+}
+
+interface IWETH {
+    function deposit() external payable;
+    function transfer(address to, uint value) external returns (bool);
+    function withdraw(uint) external;
+}
+
+/**
+    @title Facilitates deposits, creation and votiing of deposit proposals, and deposit executions.
+    @author ChainSafe Systems.
+ */
+contract Bridge is Pausable, AccessControl, SafeMath {
+
+    uint8   public _chainID;
+    uint256 public _relayerThreshold;
+    uint256 public _totalRelayers;
+    uint256 public _totalOperators;
+    uint256 public _totalProposals;
+    uint256 public _fee;
+    uint256 public _expiry;
+    address public _wtokenAddress;
+
+    enum Vote {No, Yes}
+
+    enum ProposalStatus {Inactive, Active, Passed, Executed, Cancelled}
+
+    struct Proposal {
+        bytes32 _resourceID;
+        bytes32 _dataHash;
+        address[] _yesVotes;
+        address[] _noVotes;
+        ProposalStatus _status;
+        uint256 _proposedBlock;
+    }
+
+    // destinationChainID => number of deposits
+    mapping(uint8 => uint64) public _depositCounts;
+    // destinationID ==> specailFee other than _fee
+    mapping(uint8 => uint256) public _specialFee;
+    // resourceID => handler address
+    mapping(bytes32 => address) public _resourceIDToHandlerAddress;
+    // depositNonce => destinationChainID => bytes
+    mapping(uint64 => mapping(uint8 => bytes)) public _depositRecords;
+    // destinationChainID + depositNonce => dataHash => Proposal
+    mapping(uint72 => mapping(bytes32 => Proposal)) public _proposals;
+    // destinationChainID + depositNonce => dataHash => relayerAddress => bool
+    mapping(uint72 => mapping(bytes32 => mapping(address => bool))) public _hasVotedOnProposal;
+
+
+    event RelayerThresholdChanged(uint256 indexed newThreshold);
+    event RelayerAdded(address indexed relayer);
+    event RelayerRemoved(address indexed relayer);
+    event OperatorAdded(address indexed operator);
+    event OperatorRemoved(address indexed operator);
+    event Deposit(
+        uint8   indexed destinationChainID,
+        bytes32 indexed resourceID,
+        uint64  indexed depositNonce
+    );
+    event ProposalEvent(
+        uint8           indexed originChainID,
+        uint64          indexed depositNonce,
+        ProposalStatus  indexed status,
+        bytes32 resourceID,
+        bytes32 dataHash
+    );
+
+    event ProposalVote(
+        uint8   indexed originChainID,
+        uint64  indexed depositNonce,
+        ProposalStatus indexed status,
+        bytes32 resourceID
+    );
+
+    bytes32 public constant RELAYER_ROLE = keccak256("RELAYER_ROLE");
+    bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
+
+    modifier onlyAdmin() {
+        _onlyAdmin();
+        _;
+    }
+
+    modifier onlyAdminOrRelayer() {
+        _onlyAdminOrRelayer();
+        _;
+    }
+
+    modifier onlyRelayers() {
+        _onlyRelayers();
+        _;
+    }
+
+    modifier onlyOperators() {
+        _onlyOperators();
+        _;
+    }
+
+    modifier onlyAdminOrOperator() {
+        _onlyAdminOrOperator();
+        _;
+    }
+
+    function _onlyAdminOrRelayer() private {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || hasRole(RELAYER_ROLE, msg.sender),
+            "sender is not relayer or admin");
+    }
+
+    function _onlyAdminOrOperator() private {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || hasRole(OPERATOR_ROLE, msg.sender),
+            "sender is not operator or admin");
+    }
+
+    function _onlyAdmin() private {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "sender doesn't have admin role");
+    }
+
+    function _onlyRelayers() private {
+        require(hasRole(RELAYER_ROLE, msg.sender), "sender doesn't have relayer role");
+    }
+
+    function _onlyOperators() private {
+        require(hasRole(OPERATOR_ROLE, msg.sender), "sender doesn't have relayer role");
     }
 
     /**
-     * @dev Creates `amount` new tokens for `to`.
-     *
-     * See {ERC20-_mint}.
-     *
-     * Requirements:
-     *
-     * - the caller must have the `MINTER_ROLE`.
+        @notice Initializes Bridge, creates and grants {msg.sender} the admin role,
+        creates and grants {initialRelayers} the relayer role.
+        @param chainID ID of chain the Bridge contract exists on.
+        @param initialRelayers Addresses that should be initially granted the relayer role.
+        @param initialRelayerThreshold Number of votes needed for a deposit proposal to be considered passed.
      */
-    function mint(address to, uint256 amount) public {
-        require(hasRole(MINTER_ROLE, _msgSender()), "ERC20PresetMinterPauser: must have minter role to mint");
-        _mint(to, amount);
+    constructor (uint8 chainID, address[] memory initialRelayers, uint256 initialRelayerThreshold, uint256 fee, uint256 expiry) public {
+        _chainID = chainID;
+        _relayerThreshold = initialRelayerThreshold;
+        _fee = fee;
+        _expiry = expiry;
+
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setRoleAdmin(RELAYER_ROLE, DEFAULT_ADMIN_ROLE);
+        _setRoleAdmin(OPERATOR_ROLE, DEFAULT_ADMIN_ROLE);
+
+        for (uint256 i; i < initialRelayers.length; i++) {
+            grantRole(RELAYER_ROLE, initialRelayers[i]);
+            _totalRelayers++;
+        }
+
     }
 
     /**
-     * @dev Pauses all token transfers.
-     *
-     * See {ERC20Pausable} and {Pausable-_pause}.
-     *
-     * Requirements:
-     *
-     * - the caller must have the `PAUSER_ROLE`.
+        @notice Returns true if {relayer} has the relayer role.
+        @param relayer Address to check.
      */
-    function pause() public {
-        require(hasRole(PAUSER_ROLE, _msgSender()), "ERC20PresetMinterPauser: must have pauser role to pause");
+    function isRelayer(address relayer) external view returns (bool) {
+        return hasRole(RELAYER_ROLE, relayer);
+    }
+
+    /**
+        @notice Returns true if {operator} has the operator role.
+        @param operator Address to check.
+     */
+    function isOperator(address operator) external view returns (bool) {
+        return hasRole(OPERATOR_ROLE, operator);
+    }
+
+    /**
+        @notice Removes admin role from {msg.sender} and grants it to {newAdmin}.
+        @notice Only callable by an address that currently has the admin role.
+        @param newAdmin Address that admin role will be granted to.
+     */
+    function renounceAdmin(address newAdmin) external onlyAdmin {
+        grantRole(DEFAULT_ADMIN_ROLE, newAdmin);
+        renounceRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    }
+
+    /**
+        @notice Pauses deposits, proposal creation and voting, and deposit executions.
+        @notice Only callable by an address that currently has the admin role.
+     */
+    function adminPauseTransfers() external onlyAdminOrOperator {
         _pause();
     }
 
     /**
-     * @dev Unpauses all token transfers.
-     *
-     * See {ERC20Pausable} and {Pausable-_unpause}.
-     *
-     * Requirements:
-     *
-     * - the caller must have the `PAUSER_ROLE`.
+        @notice Unpauses deposits, proposal creation and voting, and deposit executions.
+        @notice Only callable by an address that currently has the admin role.
      */
-    function unpause() public {
-        require(hasRole(PAUSER_ROLE, _msgSender()), "ERC20PresetMinterPauser: must have pauser role to unpause");
+    function adminUnpauseTransfers() external onlyAdminOrOperator {
         _unpause();
     }
 
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal override(ERC20, ERC20Pausable) {
-        super._beforeTokenTransfer(from, to, amount);
+    /**
+        @notice Modifies the number of votes required for a proposal to be considered passed.
+        @notice Only callable by an address that currently has the admin role.
+        @param newThreshold Value {_relayerThreshold} will be changed to.
+        @notice Emits {RelayerThresholdChanged} event.
+     */
+    function adminChangeRelayerThreshold(uint256 newThreshold) external onlyAdmin {
+        _relayerThreshold = newThreshold;
+        emit RelayerThresholdChanged(newThreshold);
     }
-}
 
-/**
- * @dev {ERC20} token, including:
- *
- *  - ability for holders to burn (destroy) their tokens
- *  - a minter role that allows for token minting (creation)
- *  - a pauser role that allows to stop all token transfers
- *
- * This contract uses {AccessControl} to lock permissioned functions using the
- * different roles - head to its documentation for details.
- *
- * The account that deploys the contract will be granted the minter and pauser
- * roles, as well as the default admin role, which will let it grant both minter
- * and pauser roles to aother accounts
- */
-contract ERC20MinterBurnerPauser is ERC20PresetMinterPauser {
-    constructor(
-        string memory name,
-        string memory symbol,
-        uint8 decimals
-    ) public ERC20PresetMinterPauser(name, symbol) {
-        _setupDecimals(decimals);
+    /**
+        @notice Grants {relayerAddress} the relayer role and increases {_totalRelayer} count.
+        @notice Only callable by an address that currently has the admin role.
+        @param relayerAddress Address of relayer to be added.
+        @notice Emits {RelayerAdded} event.
+     */
+    function adminAddRelayer(address relayerAddress) external onlyAdmin {
+        require(!hasRole(RELAYER_ROLE, relayerAddress), "addr already has relayer role!");
+        grantRole(RELAYER_ROLE, relayerAddress);
+        emit RelayerAdded(relayerAddress);
+        _totalRelayers++;
     }
+
+    /**
+        @notice Removes relayer role for {relayerAddress} and decreases {_totalRelayer} count.
+        @notice Only callable by an address that currently has the admin role.
+        @param relayerAddress Address of relayer to be removed.
+        @notice Emits {RelayerRemoved} event.
+     */
+    function adminRemoveRelayer(address relayerAddress) external onlyAdmin {
+        require(hasRole(RELAYER_ROLE, relayerAddress), "addr doesn't have relayer role!");
+        revokeRole(RELAYER_ROLE, relayerAddress);
+        emit RelayerRemoved(relayerAddress);
+        _totalRelayers--;
+    }
+
+    /**
+        @notice Grants {operatorAddress} the relayer role and increases {_totalOperator} count.
+        @notice Only callable by an address that currently has the admin role.
+        @param operatorAddress Address of operator to be added.
+        @notice Emits {OperatorAdded} event.
+     */
+    function adminAddOperator(address operatorAddress) external onlyAdmin {
+        require(!hasRole(OPERATOR_ROLE, operatorAddress), "addr already has operator role!");
+        grantRole(OPERATOR_ROLE, operatorAddress);
+        emit OperatorAdded(operatorAddress);
+        _totalOperators++;
+    }
+
+    /**
+        @notice Removes operator role for {operatorAddress} and decreases {_totalOperator} count.
+        @notice Only callable by an address that currently has the admin role.
+        @param operatorAddress Address of relayer to be removed.
+        @notice Emits {OperatorRemoved} event.
+     */
+    function adminRemoveOperator(address operatorAddress) external onlyAdmin {
+        require(hasRole(OPERATOR_ROLE, operatorAddress), "addr doesn't have operator role!");
+        revokeRole(OPERATOR_ROLE, operatorAddress);
+        emit OperatorRemoved(operatorAddress);
+        _totalOperators--;
+    }
+
+    /**
+        @notice Sets a new resource for handler contracts that use the IERCHandler interface,
+        and maps the {handlerAddress} to {resourceID} in {_resourceIDToHandlerAddress}.
+        @notice Only callable by an address that currently has the admin role.
+        @param handlerAddress Address of handler resource will be set for.
+        @param resourceID ResourceID to be used when making deposits.
+        @param tokenAddress Address of contract to be called when a deposit is made and a deposited is executed.
+     */
+    function adminSetResource(address handlerAddress, bytes32 resourceID, address tokenAddress) external onlyAdmin {
+        _resourceIDToHandlerAddress[resourceID] = handlerAddress;
+        IERCHandler handler = IERCHandler(handlerAddress);
+        handler.setResource(resourceID, tokenAddress);
+    }
+
+    /**
+        @notice Sets a new resource for handler contracts that use the IGenericHandler interface,
+        and maps the {handlerAddress} to {resourceID} in {_resourceIDToHandlerAddress}.
+        @notice Only callable by an address that currently has the admin role.
+        @param handlerAddress Address of handler resource will be set for.
+        @param resourceID ResourceID to be used when making deposits.
+        @param contractAddress Address of contract to be called when a deposit is made and a deposited is executed.
+     */
+    function adminSetGenericResource(
+        address handlerAddress,
+        bytes32 resourceID,
+        address contractAddress,
+        bytes4 depositFunctionSig,
+        uint256 depositFunctionDepositerOffset,
+        bytes4 executeFunctionSig
+    ) external onlyAdmin {
+        _resourceIDToHandlerAddress[resourceID] = handlerAddress;
+        IGenericHandler handler = IGenericHandler(handlerAddress);
+        handler.setResource(resourceID, contractAddress, depositFunctionSig, depositFunctionDepositerOffset, executeFunctionSig);
+    }
+
+    /**
+        @notice Sets a resource as burnable for handler contracts that use the IERCHandler interface.
+        @notice Only callable by an address that currently has the admin role.
+        @param handlerAddress Address of handler resource will be set for.
+        @param tokenAddress Address of contract to be called when a deposit is made and a deposited is executed.
+     */
+    function adminSetBurnable(address handlerAddress, address tokenAddress) external onlyAdmin {
+        IERCHandler handler = IERCHandler(handlerAddress);
+        handler.setBurnable(tokenAddress);
+    }
+
+    /**
+        @notice Returns a proposal.
+        @param originChainID Chain ID deposit originated from.
+        @param depositNonce ID of proposal generated by proposal's origin Bridge contract.
+        @param dataHash Hash of data to be provided when deposit proposal is executed.
+        @return Proposal which consists of:
+        - _dataHash Hash of data to be provided when deposit proposal is executed.
+        - _yesVotes Number of votes in favor of proposal.
+        - _noVotes Number of votes against proposal.
+        - _status Current status of proposal.
+     */
+    function getProposal(uint8 originChainID, uint64 depositNonce, bytes32 dataHash) external view returns (Proposal memory) {
+        uint72 nonceAndID = (uint72(depositNonce) << 8) | uint72(originChainID);
+        return _proposals[nonceAndID][dataHash];
+    }
+
+    /**
+        @notice Changes deposit fee.
+        @notice Only callable by admin.
+        @param newFee Value {_fee} will be updated to.
+     */
+    function adminChangeFee(uint256 newFee) external onlyAdmin {
+        require(_fee != newFee, "Current fee is equal to new fee");
+        _fee = newFee;
+    }
+
+    /**
+        @notice Changes deposit fee.
+        @notice Only callable by admin.
+        @param newFee Value {_specialFee} will be updated to.
+        @param chainID Value {_specialFeeChainID} will be updated to
+     */
+    function adminChangeSpecialFee(uint256 newFee, uint8 chainID) external onlyAdminOrOperator {
+        uint256 current = _specialFee[chainID];
+        require((current != newFee), "Current special fee equals to the new fee");
+        _specialFee[chainID] = newFee;
+    }
+
+    /**
+        @notice Get bridge fee, Returns fee of destionation chainID.
+        @param destinationChainID Value destination chainID
+        @return _fee
+     */
+    function _getFee(uint8 destinationChainID) internal view returns (uint256) {
+        uint256 special = _specialFee[destinationChainID];
+        if (special != 0) {
+            return special;
+        } else {
+            return _fee;
+        }
+    }
+
+    function getFee(uint8 destinationChainID) external view returns (uint256) {
+        return _getFee(destinationChainID);
+    }
+    /**
+        @notice Used to manually withdraw funds from ERC safes.
+        @param handlerAddress Address of handler to withdraw from.
+        @param newBridgeAddress Address of the updated _bridgeAddress.
+     */
+    function adminUpdateBridgeAddress(
+        address handlerAddress,
+        address newBridgeAddress
+    ) external onlyAdmin {
+        IERCHandler handler = IERCHandler(handlerAddress);
+        handler.updateBridgeAddress(newBridgeAddress);
+    }
+
+    /**
+        @notice Used to manually withdraw funds from ERC safes.
+        @param handlerAddress Address of handler to withdraw from.
+        @param tokenAddress Address of token to withdraw.
+        @param recipient Address to withdraw tokens to.
+        @param amountOrTokenID Either the amount of ERC20 tokens or the ERC721 token ID to withdraw.
+     */
+    function adminWithdraw(
+        address handlerAddress,
+        address tokenAddress,
+        address recipient,
+        uint256 amountOrTokenID
+    ) external onlyAdmin {
+        IERCHandler handler = IERCHandler(handlerAddress);
+        handler.withdraw(tokenAddress, recipient, amountOrTokenID);
+    }
+
+    /**
+        @notice Initiates a transfer using a specified handler contract.
+        @notice Only callable when Bridge is not paused.
+        @param destinationChainID ID of chain deposit will be bridged to.
+        @param resourceID ResourceID used to find address of handler to be used for deposit.
+        @param data Additional data to be passed to specified handler.
+        @notice Emits {Deposit} event.
+     */
+    function deposit(uint8 destinationChainID, bytes32 resourceID, bytes calldata data) external payable whenNotPaused {
+        uint256 fee = _getFee(destinationChainID);
+
+        require(msg.value == fee, "Incorrect fee supplied");
+
+        address handler = _resourceIDToHandlerAddress[resourceID];
+        require(handler != address(0), "resourceID not mapped to handler");
+
+        uint64 depositNonce = ++_depositCounts[destinationChainID];
+        _depositRecords[depositNonce][destinationChainID] = data;
+
+        IDepositExecute depositHandler = IDepositExecute(handler);
+        depositHandler.deposit(resourceID, destinationChainID, depositNonce, msg.sender, data);
+
+        emit Deposit(destinationChainID, resourceID, depositNonce);
+    }
+
+    /**
+        @notice Initiates a transfer using a specified handler contract.
+        @notice Only callable when Bridge is not paused.
+        @param destinationChainID ID of chain deposit will be bridged to.
+        @param resourceID ResourceID used to find address of handler to be used for deposit.
+        @param data Additional data to be passed to specified handler.
+        @notice Emits {Deposit} event.
+     */
+    function depositETH(uint8 destinationChainID, bytes32 resourceID, bytes calldata data) external payable whenNotPaused {
+        uint256 fee = _getFee(destinationChainID);
+
+        require(msg.value >= fee, "Insufficient fee supplied");
+
+        address handler = _resourceIDToHandlerAddress[resourceID];
+        require(handler != address(0), "resourceID not mapped to handler");
+
+        uint256 value = msg.value - fee;
+        uint256 amount;
+        assembly {
+            amount := calldataload(0x84)
+        }
+        require (amount == value, "msg.value and data mismatched");
+
+        address wtokenAddress = IERCHandler(handler)._wtokenAddress();
+        require(wtokenAddress != address(0), "_wtokenAddress is 0x");
+        IWETH(wtokenAddress).deposit{value: value}();
+        IWETH(wtokenAddress).transfer(address(handler), value);
+
+        uint64 depositNonce = ++_depositCounts[destinationChainID];
+        _depositRecords[depositNonce][destinationChainID] = data;
+
+        IDepositExecute depositHandler = IDepositExecute(handler);
+        depositHandler.deposit(resourceID, destinationChainID, depositNonce, msg.sender, data);
+
+        emit Deposit(destinationChainID, resourceID, depositNonce);
+    }
+
+    /**
+        @notice When called, {msg.sender} will be marked as voting in favor of proposal.
+        @notice Only callable by relayers when Bridge is not paused.
+        @param chainID ID of chain deposit originated from.
+        @param depositNonce ID of deposited generated by origin Bridge contract.
+        @param dataHash Hash of data provided when deposit was made.
+        @notice Proposal must not have already been passed or executed.
+        @notice {msg.sender} must not have already voted on proposal.
+        @notice Emits {ProposalEvent} event with status indicating the proposal status.
+        @notice Emits {ProposalVote} event.
+     */
+    function voteProposal(uint8 chainID, uint64 depositNonce, bytes32 resourceID, bytes32 dataHash) external onlyRelayers whenNotPaused {
+
+        uint72 nonceAndID = (uint72(depositNonce) << 8) | uint72(chainID);
+        Proposal storage proposal = _proposals[nonceAndID][dataHash];
+
+        require(_resourceIDToHandlerAddress[resourceID] != address(0), "no handler for resourceID");
+        require(uint(proposal._status) <= 1, "proposal already passed/executed/cancelled");
+        require(!_hasVotedOnProposal[nonceAndID][dataHash][msg.sender], "relayer already voted");
+
+        if (uint(proposal._status) == 0) {
+            ++_totalProposals;
+            _proposals[nonceAndID][dataHash] = Proposal({
+                _resourceID : resourceID,
+                _dataHash : dataHash,
+                _yesVotes : new address[](1),
+                _noVotes : new address[](0),
+                _status : ProposalStatus.Active,
+                _proposedBlock : block.number
+                });
+
+            proposal._yesVotes[0] = msg.sender;
+            emit ProposalEvent(chainID, depositNonce, ProposalStatus.Active, resourceID, dataHash);
+        } else {
+            if (sub(block.number, proposal._proposedBlock) > _expiry) {
+                // if the number of blocks that has passed since this proposal was
+                // submitted exceeds the expiry threshold set, cancel the proposal
+                proposal._status = ProposalStatus.Cancelled;
+                emit ProposalEvent(chainID, depositNonce, ProposalStatus.Cancelled, resourceID, dataHash);
+            } else {
+                require(dataHash == proposal._dataHash, "datahash mismatch");
+                proposal._yesVotes.push(msg.sender);
+
+
+            }
+
+        }
+        if (proposal._status != ProposalStatus.Cancelled) {
+            _hasVotedOnProposal[nonceAndID][dataHash][msg.sender] = true;
+            emit ProposalVote(chainID, depositNonce, proposal._status, resourceID);
+
+            // If _depositThreshold is set to 1, then auto finalize
+            // or if _relayerThreshold has been exceeded
+            if (_relayerThreshold <= 1 || proposal._yesVotes.length >= _relayerThreshold) {
+                proposal._status = ProposalStatus.Passed;
+
+                emit ProposalEvent(chainID, depositNonce, ProposalStatus.Passed, resourceID, dataHash);
+            }
+        }
+
+    }
+
+    /**
+        @notice Executes a deposit proposal that is considered passed using a specified handler contract.
+        @notice Only callable by relayers when Bridge is not paused.
+        @param chainID ID of chain deposit originated from.
+        @param depositNonce ID of deposited generated by origin Bridge contract.
+        @param dataHash Hash of data originally provided when deposit was made.
+        @notice Proposal must be past expiry threshold.
+        @notice Emits {ProposalEvent} event with status {Cancelled}.
+     */
+    function cancelProposal(uint8 chainID, uint64 depositNonce, bytes32 dataHash) public onlyAdminOrRelayer {
+        uint72 nonceAndID = (uint72(depositNonce) << 8) | uint72(chainID);
+        Proposal storage proposal = _proposals[nonceAndID][dataHash];
+
+        require(proposal._status != ProposalStatus.Cancelled, "Proposal already cancelled");
+        require(sub(block.number, proposal._proposedBlock) > _expiry, "Proposal not at expiry threshold");
+
+        proposal._status = ProposalStatus.Cancelled;
+        emit ProposalEvent(chainID, depositNonce, ProposalStatus.Cancelled, proposal._resourceID, proposal._dataHash);
+
+    }
+
+    /**
+        @notice Executes a deposit proposal that is considered passed using a specified handler contract.
+        @notice Only callable by relayers when Bridge is not paused.
+        @param chainID ID of chain deposit originated from.
+        @param resourceID ResourceID to be used when making deposits.
+        @param depositNonce ID of deposited generated by origin Bridge contract.
+        @param data Data originally provided when deposit was made.
+        @notice Proposal must have Passed status.
+        @notice Hash of {data} must equal proposal's {dataHash}.
+        @notice Emits {ProposalEvent} event with status {Executed}.
+     */
+    function executeProposal(uint8 chainID, uint64 depositNonce, bytes calldata data, bytes32 resourceID) external onlyRelayers whenNotPaused {
+        address handler = _resourceIDToHandlerAddress[resourceID];
+        uint72 nonceAndID = (uint72(depositNonce) << 8) | uint72(chainID);
+        bytes32 dataHash = keccak256(abi.encodePacked(handler, data));
+        Proposal storage proposal = _proposals[nonceAndID][dataHash];
+
+        require(proposal._status != ProposalStatus.Inactive, "proposal is not active");
+        require(proposal._status == ProposalStatus.Passed, "proposal already transferred");
+        require(dataHash == proposal._dataHash, "data doesn't match datahash");
+
+        proposal._status = ProposalStatus.Executed;
+
+        IDepositExecute depositHandler = IDepositExecute(_resourceIDToHandlerAddress[proposal._resourceID]);
+        depositHandler.executeProposal(proposal._resourceID, data);
+
+        emit ProposalEvent(chainID, depositNonce, proposal._status, proposal._resourceID, proposal._dataHash);
+    }
+
+    /**
+        @notice Transfers eth in the contract to the specified addresses. The parameters addrs and amounts are mapped 1-1.
+        This means that the address at index 0 for addrs will receive the amount (in WEI) from amounts at index 0.
+        @param addrs Array of addresses to transfer {amounts} to.
+        @param amounts Array of amonuts to transfer to {addrs}.
+     */
+    function transferFunds(address payable[] calldata addrs, uint[] calldata amounts) external onlyAdmin {
+        for (uint256 i = 0; i < addrs.length; i++) {
+            addrs[i].transfer(amounts[i]);
+        }
+    }
+
 }

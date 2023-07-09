@@ -111,8 +111,12 @@ contract C {
             for eventNode in eventSendNodeList.keys():
                 # 1. check asset type; 2. check from address; 3. check other informations.
                 transfer_functions = set()
-                for dominator in eventNode.dominators:
-                    for ir in dominator.irs:
+                for dominator in list(eventNode.dominators) + list(eventNode.dominance_exploration_ordered):
+                    slithir_opreation = []
+                    for inter_call in dominator.internal_calls:
+                        if isinstance(inter_call, Function):
+                            slithir_opreation += inter_call.all_slithir_operations()
+                    for ir in dominator.irs + slithir_opreation:
                         if isinstance(ir, (HighLevelCall, LowLevelCall, LibraryCall, Transfer, Send)):
                             if isinstance(ir, (HighLevelCall)):
                                 if isinstance(ir.function, Function):

@@ -97,8 +97,12 @@ contract C {
             transfer_functions = set()
 
             for node in func.nodes:
-                func = node.function
-                for ir in node.irs:
+                # func = node.function
+                slithir_operation = []
+                for inter_call in node.internal_calls:
+                    slithir_operation += inter_call.all_slithir_operations()
+
+                for ir in node.irs + slithir_operation:
                     if isinstance(ir, (HighLevelCall, LowLevelCall, LibraryCall, Transfer, Send)):
                         if isinstance(ir, (HighLevelCall)):
                             if isinstance(ir.function, Function):
