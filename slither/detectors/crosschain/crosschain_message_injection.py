@@ -24,7 +24,7 @@ from slither.core.declarations.solidity_variables import (
 )
 
 from slither.slithir.operations.event_call import EventCall
-from slither.slithir.operations import HighLevelCall, LibraryCall
+from slither.slithir.operations import HighLevelCall, LibraryCall, InternalCall
 from slither.slithir.operations.low_level_call import LowLevelCall
 from slither.utils.output import Output
 
@@ -102,12 +102,18 @@ contract C {
             missing_check_process_call = []
 
             for node in function.nodes:
-                for ir in node.irs:
+                slithir_operation = []
+                for inter_call in node.internal_calls:
+                    if isinstance(inter_call, Function):
+                        slithir_operation += inter_call.all_slithir_operations()
+
+                for ir in node.irs + slithir_operation:
                     if isinstance(ir, HighLevelCall) or isinstance(ir, LowLevelCall):
                         if is_tainted(ir.destination, contract):
                             if (function, node) not in results:
                                 results.append((function, node))
                                 continue
+
                 if function in results:
                     continue
             if function in results:

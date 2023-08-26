@@ -4,7 +4,7 @@
 
 // File: @openzeppelin/contracts/math/SafeMath.sol
 
-pragma solidity ^0.5.0;
+
 
 /**
  * @dev Wrappers over Solidity's arithmetic operations with added overflow
@@ -242,7 +242,7 @@ interface IERC20 {
 
 // File: @openzeppelin/contracts/utils/Address.sol
 
-pragma solidity ^0.5.5;
+
 
 /**
  * @dev Collection of functions related to the address type
@@ -392,7 +392,7 @@ library SafeERC20 {
 
 // File: contracts/erc20/ERC20EthManager.sol
 
-pragma solidity 0.5.17;
+
 
 
 
@@ -406,7 +406,6 @@ contract ERC20EthManager {
     event Locked(
         address indexed token,
         address indexed sender,
-        uint256 amount,
         address recipient
     );
 
@@ -448,11 +447,11 @@ contract ERC20EthManager {
         );
         require(amount > 0, "EthManager/zero token locked");
         IERC20 ethToken = IERC20(ethTokenAddr);
-        uint256 _balanceBefore = ethToken.balanceOf(msg.sender);
+//        uint256 _balanceBefore = ethToken.balanceOf(msg.sender);
         ethToken.safeTransferFrom(msg.sender, address(this), amount);
-        uint256 _balanceAfter = ethToken.balanceOf(msg.sender);
-        uint256 _actualAmount = _balanceBefore.sub(_balanceAfter);
-        emit Locked(address(ethToken), msg.sender, _actualAmount, recipient);
+//        uint256 _balanceAfter = ethToken.balanceOf(msg.sender);
+//        uint256 _actualAmount = _balanceBefore.sub(_balanceAfter);
+        emit Locked(address(ethToken), msg.sender, recipient);
     }
 
     /**
@@ -474,11 +473,11 @@ contract ERC20EthManager {
         );
         require(amount > 0, "EthManager/zero token locked");
         IERC20 ethToken = IERC20(ethTokenAddr);
-        uint256 _balanceBefore = ethToken.balanceOf(userAddr);
+//        uint256 _balanceBefore = ethToken.balanceOf(userAddr);
         ethToken.safeTransferFrom(userAddr, address(this), amount);
-        uint256 _balanceAfter = ethToken.balanceOf(userAddr);
-        uint256 _actualAmount = _balanceBefore.sub(_balanceAfter);
-        emit Locked(address(ethToken), userAddr, _actualAmount, recipient);
+//        uint256 _balanceAfter = ethToken.balanceOf(userAddr);
+//        uint256 _actualAmount = _balanceBefore.sub(_balanceAfter);
+        emit Locked(address(ethToken), userAddr, recipient);
     }
 
     /**

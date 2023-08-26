@@ -398,7 +398,7 @@ contract C {
                             if call in missing_check_process_call:
                                 missing_check_process_call[call] = True
                         if isinstance(ir, InternalCall) and "ecrecover(bytes32,uint8,bytes32,bytes32)" in list(XGRAPH.nodes):
-                            if nx.has_path(XGRAPH, function.name,
+                            if nx.has_path(XGRAPH, ir.function.name,
                                            "ecrecover(bytes32,uint8,bytes32,bytes32)") and call in missing_check_process_call:
                                 # if ir.function == SolidityFunction("ecrecover(bytes32,uint8,bytes32,bytes32)") and call in missing_check_process_call:
                                 if call in missing_check_process_call:

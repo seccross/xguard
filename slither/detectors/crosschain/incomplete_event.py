@@ -81,8 +81,7 @@ contract C {
     ) -> List[Tuple[FunctionContract, List[Tuple[Node, StateVariable, Modifier]]]]:
         """
         Detects if critical contract parameters set by owners and used in access control are missing events
-        :param contract: The contract to check
-        :return: Functions with nodes of critical operations but no events
+         :return: Functions with nodes of critical operations but no events
         """
         results = []
 
@@ -127,6 +126,15 @@ contract C {
                                             eventSendNodeList[eventNode]["sourceAmount"] = ir.arguments[2]
 
                                             transfer_functions.add(dominator)
+                                    elif ir.function.solidity_signature in [
+                                        "safeTransferFrom(address,address,address,uint256)"]:
+                                        if dominator not in transfer_functions:
+                                            eventSendNodeList[eventNode]["sourceToken"] = ir.arguments[0]
+                                            eventSendNodeList[eventNode]["sourceUser"] = ir.arguments[1]
+                                            eventSendNodeList[eventNode]["sourceAmount"] = ir.arguments[3]
+
+                                            transfer_functions.add(dominator)
+
                             elif isinstance(ir, LibraryCall) and ir.function.solidity_signature in [
                                 "safeTransferFrom(address,address,address,uint256)"]:
                                 if dominator not in transfer_functions:
