@@ -1,4 +1,4 @@
-# import networkx as nx
+import networkx as nx
 # def _init():
 #     global CROSSCHAINSENDSIGLIST
 #
@@ -8,7 +8,7 @@
 #     ST
 #     global CROSSCHAINRECEIVEEVENTLI
 
-# XGRAPH = nx.Graph()
+XGRAPH = nx.Graph()
     # For Polygon
 # GCROSSCHAINSENDSIGLIST = ["lockTokens(address,address,address,bytes)"]
 # GCROSSCHAINRECEIVESIGLIST = ["exitTokens(address,address,bytes)", "receive2(address,address,uint256)"]
