@@ -111,7 +111,7 @@ contract C {
 
                 for ir in node.irs + slithir_operation:
                     if isinstance(ir, HighLevelCall) or isinstance(ir, LowLevelCall):
-                        if is_tainted(ir.destination, contract):
+                        if is_tainted(ir.arguments[0], contract):
                             if (function, node) not in results:
                                 results.append((function, node))
                                 continue
