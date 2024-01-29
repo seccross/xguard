@@ -3,7 +3,6 @@ Module detecting vulnerabilities in crosschain bridges
 
 """
 from typing import List, Tuple
-from .globalVar import GCROSSCHAINSENDSIGLIST, GCROSSCHAINRECEIVESIGLIST, GCROSSCHAINRECEIVEEVENTLIST, GCROSSCHAINSENDEVENTLIST
 from slither.analyses.data_dependency.data_dependency import is_tainted, is_dependent
 from slither.core.cfg.node import Node
 # from slither.core.declarations.contract import Contract
@@ -27,8 +26,11 @@ from slither.slithir.operations.event_call import EventCall
 from slither.slithir.operations import HighLevelCall, LibraryCall, InternalCall
 from slither.slithir.operations.low_level_call import LowLevelCall
 from slither.utils.output import Output
-import os
-import json
+
+from crosschain import get_args
+
+
+
 
 # T3:Inconsistency Behavior
 class CrosschainMessageInjection(AbstractDetector):
@@ -41,18 +43,10 @@ class CrosschainMessageInjection(AbstractDetector):
     IMPACT = DetectorClassification.HIGH
     CONFIDENCE = DetectorClassification.HIGH
 
-    SEND_SIGS = os.environ.get('SEND_SIGS')
-    RECEIVE_SIGS = os.environ.get('RECEIVE_SIGS')
-    EVENTS = os.environ.get('EVENTS')
-    SEND_STORES = os.environ.get('SEND_STORES')
-
-    CROSSCHAINSENDSIGLIST = json.loads(SEND_SIGS) if SEND_SIGS else GCROSSCHAINSENDSIGLIST
-    CROSSCHAINRECEIVESIGLIST = json.loads(RECEIVE_SIGS) if RECEIVE_SIGS else GCROSSCHAINRECEIVESIGLIST
-    CROSSCHAINSENDEVENTLIST = json.loads(EVENTS) if EVENTS else GCROSSCHAINSENDEVENTLIST
-    CROSSCHAINRECEIVEEVENTLIST = json.loads(SEND_STORES) if SEND_STORES else GCROSSCHAINRECEIVEEVENTLIST
+    CROSSCHAINSENDSIGLIST, CROSSCHAINRECEIVESIGLIST, CROSSCHAINSENDEVENTLIST, CROSSCHAINRECEIVEEVENTLIST = get_args()
 
 
-    WIKI = "https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-access-control"
+    WIKI = "https://github.com/liyue-cs/CrosschainSniffer"
     WIKI_TITLE = "Crosschain message injecton"
     WIKI_DESCRIPTION = "Crosschain message injecton"
 

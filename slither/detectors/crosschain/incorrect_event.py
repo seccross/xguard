@@ -20,8 +20,8 @@ from slither.slithir.operations.event_call import EventCall
 from slither.slithir.operations import HighLevelCall, LibraryCall
 from slither.slithir.operations.low_level_call import LowLevelCall
 from slither.utils.output import Output
-import os
-import json
+
+from crosschain import get_args
 
 
 # T1:Inconsistency Behavior
@@ -35,17 +35,9 @@ class IncorrectEvent(AbstractDetector):
     IMPACT = DetectorClassification.HIGH
     CONFIDENCE = DetectorClassification.HIGH
 
-    SEND_SIGS = os.environ.get('SEND_SIGS')
-    RECEIVE_SIGS = os.environ.get('RECEIVE_SIGS')
-    EVENTS = os.environ.get('EVENTS')
-    SEND_STORES = os.environ.get('SEND_STORES')
+    CROSSCHAINSENDSIGLIST, CROSSCHAINRECEIVESIGLIST, CROSSCHAINSENDEVENTLIST, CROSSCHAINRECEIVEEVENTLIST = get_args()
 
-    CROSSCHAINSENDSIGLIST = json.loads(SEND_SIGS) if SEND_SIGS else GCROSSCHAINSENDSIGLIST
-    CROSSCHAINRECEIVESIGLIST = json.loads(RECEIVE_SIGS) if RECEIVE_SIGS else GCROSSCHAINRECEIVESIGLIST
-    CROSSCHAINSENDEVENTLIST = json.loads(EVENTS) if EVENTS else GCROSSCHAINSENDEVENTLIST
-    CROSSCHAINRECEIVEEVENTLIST = json.loads(SEND_STORES) if SEND_STORES else GCROSSCHAINRECEIVEEVENTLIST
-
-    WIKI = "https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-event"
+    WIKI = "https://github.com/liyue-cs/CrosschainSniffer"
     WIKI_TITLE = "An incorrect event emitted in crosschain bridge"
     WIKI_DESCRIPTION = "An incorrect event emitted in crosschain bridge"
 

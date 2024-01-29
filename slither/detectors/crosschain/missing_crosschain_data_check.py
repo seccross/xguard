@@ -5,8 +5,7 @@ Module detecting vulnerabilities in crosschain bridges
 import copy
 import networkx as nx
 from typing import List, Tuple
-from .globalVar import GCROSSCHAINSENDSIGLIST, GCROSSCHAINRECEIVESIGLIST, GCROSSCHAINRECEIVEEVENTLIST, \
-    GCROSSCHAINSENDEVENTLIST, XGRAPH
+from .globalVar import XGRAPH
 from slither.analyses.data_dependency.data_dependency import is_tainted, is_dependent
 from slither.core.cfg.node import Node
 # from slither.core.declarations.contract import Contract
@@ -43,6 +42,7 @@ from slither.core.variables.variable import Variable
 from slither.printers.abstract_printer import AbstractPrinter
 from slither.utils.output import Output
 
+from crosschain import get_args
 
 def _contract_subgraph(contract: Contract) -> str:
     return f"cluster_{contract.id}_{contract.name}"
@@ -287,14 +287,12 @@ class MissingCrosschainCheck(AbstractDetector):
 
     ARGUMENT = "miss-crosschain-data-check"
     HELP = "Missing crosschain data check on destination chain"
-    IMPACT = DetectorClassification.LOW
-    CONFIDENCE = DetectorClassification.MEDIUM
+    IMPACT = DetectorClassification.HIGH
+    CONFIDENCE = DetectorClassification.HIGH
 
-    CROSSCHAINSENDSIGLIST = GCROSSCHAINSENDSIGLIST
-    CROSSCHAINRECEIVESIGLIST = GCROSSCHAINRECEIVESIGLIST
-    CROSSCHAINSENDEVENTLIST = GCROSSCHAINSENDEVENTLIST
-    CROSSCHAINRECEIVEEVENTLIST = GCROSSCHAINRECEIVEEVENTLIST
-    WIKI = "https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-access-control"
+    CROSSCHAINSENDSIGLIST, CROSSCHAINRECEIVESIGLIST, CROSSCHAINSENDEVENTLIST, CROSSCHAINRECEIVEEVENTLIST = get_args()
+
+    WIKI = "https://github.com/liyue-cs/CrosschainSniffer"
     WIKI_TITLE = "Crosschain message might be reconstructed by event parser"
     WIKI_DESCRIPTION = "Crosschain message might be reconstructed by event parser"
     dependency_relation = {}
