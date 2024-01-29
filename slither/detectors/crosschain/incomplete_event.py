@@ -31,6 +31,8 @@ from slither.slithir.operations.event_call import EventCall
 from slither.slithir.operations import HighLevelCall, LibraryCall
 from slither.slithir.operations.low_level_call import LowLevelCall
 from slither.utils.output import Output
+import os
+import json
 
 
 class IncompleteEvent(AbstractDetector):
@@ -40,13 +42,18 @@ class IncompleteEvent(AbstractDetector):
 
     ARGUMENT = "incomplete-event"
     HELP = "An incomplete event emitted in crosschain bridge"
-    IMPACT = DetectorClassification.LOW
-    CONFIDENCE = DetectorClassification.MEDIUM
+    IMPACT = DetectorClassification.HIGH
+    CONFIDENCE = DetectorClassification.HIGH
 
-    CROSSCHAINSENDSIGLIST = GCROSSCHAINSENDSIGLIST
-    CROSSCHAINRECEIVESIGLIST = GCROSSCHAINRECEIVESIGLIST
-    CROSSCHAINSENDEVENTLIST = GCROSSCHAINSENDEVENTLIST
-    CROSSCHAINRECEIVEEVENTLIST = GCROSSCHAINRECEIVEEVENTLIST
+    SEND_SIGS = os.environ.get('SEND_SIGS')
+    RECEIVE_SIGS = os.environ.get('RECEIVE_SIGS')
+    EVENTS = os.environ.get('EVENTS')
+    SEND_STORES = os.environ.get('SEND_STORES')
+
+    CROSSCHAINSENDSIGLIST = json.loads(SEND_SIGS) if SEND_SIGS else GCROSSCHAINSENDSIGLIST
+    CROSSCHAINRECEIVESIGLIST = json.loads(RECEIVE_SIGS) if RECEIVE_SIGS else GCROSSCHAINRECEIVESIGLIST
+    CROSSCHAINSENDEVENTLIST = json.loads(EVENTS) if EVENTS else GCROSSCHAINSENDEVENTLIST
+    CROSSCHAINRECEIVEEVENTLIST = json.loads(SEND_STORES) if SEND_STORES else GCROSSCHAINRECEIVEEVENTLIST
 
     WIKI = "https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-access-control"
     WIKI_TITLE = "Crosschain message might be reconstructed by event parser"
