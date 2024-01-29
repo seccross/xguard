@@ -1,4 +1,10 @@
 # pylint: disable=unused-import,relative-beyond-top-level
+from .crosschain.crosschain_message_injection import CrosschainMessageInjection
+from .crosschain.htlc_crosschain_asset_refund import HTLCCrosschainAssetRefund
+from .crosschain.incomplete_event import IncompleteEvent
+from .crosschain.incorrect_event import IncorrectEvent
+from .crosschain.missing_crosschain_data_check import MissingCrosschainCheck
+
 from .examples.backdoor import Backdoor
 from .variables.uninitialized_state_variables import UninitializedStateVarsDetection
 from .variables.uninitialized_storage_variables import UninitializedStorageVars
