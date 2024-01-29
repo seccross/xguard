@@ -7,8 +7,8 @@ def get_list(str):
     return filtered_parts
 
 def get_args():
-    SEND_SIGS = os.environ.get('SEND_SIGS')
-    RECEIVE_SIGS = os.environ.get('RECEIVE_SIGS')
+    SEND_SIGS = os.environ.get('SEND_FUNCS')
+    RECEIVE_SIGS = os.environ.get('RECEIVE_FUNCS')
     EVENTS = os.environ.get('EVENTS')
     SEND_STORES = os.environ.get('SEND_STORES')
 
