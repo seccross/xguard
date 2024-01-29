@@ -42,7 +42,7 @@ from slither.core.variables.variable import Variable
 from slither.printers.abstract_printer import AbstractPrinter
 from slither.utils.output import Output
 
-from crosschain import get_args
+from .common import get_args
 
 def _contract_subgraph(contract: Contract) -> str:
     return f"cluster_{contract.id}_{contract.name}"

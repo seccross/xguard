@@ -21,7 +21,7 @@ from slither.slithir.operations import HighLevelCall, LibraryCall
 from slither.slithir.operations.low_level_call import LowLevelCall
 from slither.utils.output import Output
 
-from crosschain import get_args
+from .common import get_args
 
 
 # T1:Inconsistency Behavior
