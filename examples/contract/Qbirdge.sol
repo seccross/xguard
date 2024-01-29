@@ -1383,9 +1383,9 @@ contract QBridge is PausableUpgradeable, AccessControlIndexUpgradeable {
         address handler = resourceIDToHandlerAddress[resourceID];
         require(handler != address(0), "QBridge: invalid resourceID");
 
-//        uint64 depositNonce = ++_depositCounts[destinationDomainID];
+        uint64 depositNonce = ++_depositCounts[destinationDomainID];
 
-//        IQBridgeHandler(handler).depositETH{value:amount}(resourceID, msg.sender, data);
+        IQBridgeHandler(handler).depositETH{value:amount}(resourceID, msg.sender, data);
         emit Deposit(destinationDomainID, resourceID, _depositCounts[destinationDomainID], msg.sender, data);
     }
 

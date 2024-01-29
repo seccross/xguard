@@ -28,7 +28,7 @@ from slither.slithir.operations import HighLevelCall, LibraryCall, InternalCall
 from slither.slithir.operations.low_level_call import LowLevelCall
 from slither.utils.output import Output
 
-
+# T3:Inconsistency Behavior
 class CrosschainMessageInjection(AbstractDetector):
     """
     Missing events for critical contract parameters set by owners and used in access control

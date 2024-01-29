@@ -279,6 +279,7 @@ def _process_functions(functions: Sequence[Function], dependency_list, dependenc
     return render_internal_calls + render_solidity_calls + render_external_calls
 
 
+# T2:Inconsistency Behavior
 class MissingCrosschainCheck(AbstractDetector):
     """
     Missing events for critical contract parameters set by owners and used in access control
@@ -293,7 +294,6 @@ class MissingCrosschainCheck(AbstractDetector):
     CROSSCHAINRECEIVESIGLIST = GCROSSCHAINRECEIVESIGLIST
     CROSSCHAINSENDEVENTLIST = GCROSSCHAINSENDEVENTLIST
     CROSSCHAINRECEIVEEVENTLIST = GCROSSCHAINRECEIVEEVENTLIST
-
     WIKI = "https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-access-control"
     WIKI_TITLE = "Crosschain message might be reconstructed by event parser"
     WIKI_DESCRIPTION = "Crosschain message might be reconstructed by event parser"

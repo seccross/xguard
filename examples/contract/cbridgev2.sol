@@ -1666,7 +1666,7 @@ contract Bridge is Pool {
         require(msg.value == _amount, "Amount mismatch");
         require(nativeWrap != address(0), "Native wrap not set");
         bytes32 transferId = _send(_receiver, nativeWrap, _amount, _dstChainId, _nonce, _maxSlippage);
-        IWETH(nativeWrap).deposit{value: _amount}();
+//        IWETH(nativeWrap).deposit{value: _amount}();
         emit Send(transferId, msg.sender, _receiver, nativeWrap, _amount, _dstChainId, _nonce, _maxSlippage);
     }
 
@@ -1696,8 +1696,8 @@ contract Bridge is Pool {
         address[] calldata _signers,
         uint256[] calldata _powers
     ) external {
-        bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "Relay"));
-        verifySigs(abi.encodePacked(domain, _relayRequest), _sigs, _signers, _powers);
+//        bytes32 domain = keccak256(abi.encodePacked(block.chainid, address(this), "Relay"));
+//        verifySigs(abi.encodePacked(domain, _relayRequest), _sigs, _signers, _powers);
         PbBridge.Relay memory request = PbBridge.decRelay(_relayRequest);
         bytes32 transferId = keccak256(
             abi.encodePacked(

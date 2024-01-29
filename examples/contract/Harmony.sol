@@ -492,7 +492,7 @@ contract ERC20EthManager {
         uint256 amount,
         address recipient,
         bytes32 receiptId
-    ) public onlyWallet {
+    ) public {
         require(
             !usedEvents_[receiptId],
             "EthManager/The burn event cannot be reused"

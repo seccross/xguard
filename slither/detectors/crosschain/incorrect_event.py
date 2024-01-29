@@ -22,9 +22,7 @@ from slither.slithir.operations.low_level_call import LowLevelCall
 from slither.utils.output import Output
 
 
-
-
-
+# T1:Inconsistency Behavior
 class IncorrectEvent(AbstractDetector):
     """
     Missing events for critical contract parameters set by owners and used in access control
@@ -69,7 +67,8 @@ contract C {
     def _detect_incorrect_events(
         contract: Contract,
         crosschainsendsiglist: List,
-        crosschaineventlist:List
+        crosschaineventlist:List,
+        crosschainstoragelist:List
     ) -> List[Tuple[FunctionContract, List[Tuple[Node, StateVariable, Modifier]]]]:
         """
         Detects if critical contract parameters set by owners and used in access control are missing events
@@ -125,9 +124,22 @@ contract C {
                 continue
 
             else:
+                update_var = False
                 for eventSendNode in eventSendNodeList:
-                    if not any(node for node in (eventSendNode.dominators or eventSendNode.dominance_exploration_ordered) if node in state_var_written or node in external_call):
-                        results.append(function)
+                    for node in (eventSendNode.dominators or eventSendNode.dominance_exploration_ordered):
+                        if node in state_var_written:
+                            for var in node.state_variables_written:
+                                if str(var) in crosschainstoragelist:
+                                    update_var = True
+
+                        if node in external_call:
+                            if node.will_return is True:
+                                update_var = True
+
+                if update_var is False:
+                    results.append(function)
+                    # if not any(node for node in (eventSendNode.dominators or eventSendNode.dominance_exploration_ordered) if node in state_var_written or node in external_call):
+                    #     results.append(function)
                     # if not any(ir for node in  for ir in node.irs if (isinstance(ir, HighLevelCall) or isinstance(ir, LowLevelCall))):
 
 
@@ -167,7 +179,7 @@ contract C {
         # Check derived contracts for missing events
         results = []
         for contract in self.compilation_unit.contracts_derived:
-            incorrect_events = self._detect_incorrect_events(contract, self.CROSSCHAINSENDSIGLIST, self.CROSSCHAINSENDEVENTLIST)
+            incorrect_events = self._detect_incorrect_events(contract, self.CROSSCHAINSENDSIGLIST, self.CROSSCHAINSENDEVENTLIST, self.CROSSCHAINRECEIVEEVENTLIST)
             for function in incorrect_events:
                 info: DETECTOR_INFO = ["Incorrect event emit ", function, "\n"]
                 res = self.generate_result(info)

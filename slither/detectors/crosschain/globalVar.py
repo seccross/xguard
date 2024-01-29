@@ -18,10 +18,10 @@ XGRAPH = nx.Graph()
 
 
     # For cBridgev2
-GCROSSCHAINSENDSIGLIST = ["send(address,address,uint256,uint64,uint64,uint32)", "sendNative(address,uint256,uint64,uint64,uint32)"]
-GCROSSCHAINRECEIVESIGLIST = ["relay(bytes,bytes[],address[],uint256[])"]
-GCROSSCHAINSENDEVENTLIST = ["Send"]
-GCROSSCHAINRECEIVEEVENTLIST = ["Relay"]
+# GCROSSCHAINSENDSIGLIST = ["send(address,address,uint256,uint64,uint64,uint32)", "sendNative(address,uint256,uint64,uint64,uint32)"]
+# GCROSSCHAINRECEIVESIGLIST = ["relay(bytes,bytes[],address[],uint256[])"]
+# GCROSSCHAINSENDEVENTLIST = ["Send"]
+# GCROSSCHAINRECEIVEEVENTLIST = ["Relay"]
 
 
  # For Harmony
@@ -39,10 +39,11 @@ GCROSSCHAINRECEIVEEVENTLIST = ["Relay"]
 
 # For Meter.io
 
-# GCROSSCHAINSENDSIGLIST = ["deposit(uint8,bytes32,bytes)", "depositETH(uint8,bytes32,bytes)"]
-# GCROSSCHAINRECEIVESIGLIST = ["executeProposal(uint8,uint64,bytes,bytes32)"]
-# GCROSSCHAINSENDEVENTLIST = ["Deposit"]
-# GCROSSCHAINRECEIVEEVENTLIST = ["ProposalEvent"]
+GCROSSCHAINSENDSIGLIST = ["deposit(uint8,bytes32,bytes)", "depositETH(uint8,bytes32,bytes)"]
+GCROSSCHAINRECEIVESIGLIST = ["executeProposal(uint8,uint64,bytes,bytes32)"]
+GCROSSCHAINSENDEVENTLIST = ["Deposit"]
+# crosschainsendstroagename
+GCROSSCHAINRECEIVEEVENTLIST = ["balanceOf"]
 
 
 
@@ -63,7 +64,7 @@ GCROSSCHAINRECEIVEEVENTLIST = ["Relay"]
 #
 #
 # # For Qbridge
-#
+# #
 # GCROSSCHAINSENDSIGLIST = ["deposit(uint8,bytes32,bytes)", "depositETH(uint8,bytes32,bytes)"]
 # GCROSSCHAINRECEIVESIGLIST = ["executeProposal(bytes32,bytes)"]
 # GCROSSCHAINSENDEVENTLIST = ["Deposit"]
@@ -99,7 +100,7 @@ GCROSSCHAINRECEIVEEVENTLIST = ["Relay"]
 # # For RSK
 #
 # GCROSSCHAINSENDSIGLIST = ["receiveTokensTo(address,address,uint256)", "depositTo(address)"]
-# GCROSSCHAINRECEIVESIGLIST = ["claim((address,uint256,bytes32,bytes32,uint32))"]
+# GCROSSCHAINRECEIVESIGLIST = ["claim(address,uint256,bytes32,bytes32,uint32)"]
 # GCROSSCHAINSENDEVENTLIST = ["Cross"]
 # GCROSSCHAINRECEIVEEVENTLIST = ["Claimed"]
 #
