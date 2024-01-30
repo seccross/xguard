@@ -190,7 +190,7 @@ contract C {
         for contract in self.compilation_unit.contracts_derived:
             crosschain_message_injections = self._detect_crosschain_message_injection(contract, CROSSCHAINSIGLIST)
             for (function, node) in crosschain_message_injections:
-                info: DETECTOR_INFO = ["Cross-Chain Message Injection", function, "\n"]
+                info: DETECTOR_INFO = ["Found Cross-Chain Message Injection in ", function, "\n"]
                 info += ["\t- ", node, " \n"]
                 res = self.generate_result(info)
                 results.append(res)

@@ -461,7 +461,7 @@ contract C {
                                                                                         self.CROSSCHAINRECEIVESIGLIST,
                                                                                         self.CROSSCHAINRECEIVEEVENTLIST)
             for function in missing_crosschain_data_checks:
-                info: DETECTOR_INFO = ["Missing Crosschain Check ", function, "\n"]
+                info: DETECTOR_INFO = ["Missing Crosschain Data Check was found ", function, "\n"]
                 res = self.generate_result(info)
                 results.append(res)
         return results

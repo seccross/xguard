@@ -180,7 +180,7 @@ contract C {
         for contract in self.compilation_unit.contracts_derived:
             incorrect_events = self._detect_incorrect_events(contract, self.CROSSCHAINSENDSIGLIST, self.CROSSCHAINSENDEVENTLIST, self.CROSSCHAINRECEIVEEVENTLIST)
             for function in incorrect_events:
-                info: DETECTOR_INFO = ["Incorrect event emit ", function, "\n"]
+                info: DETECTOR_INFO = ["An incorrect event was emitted in ", function, "\n"]
                 res = self.generate_result(info)
                 results.append(res)
         return results

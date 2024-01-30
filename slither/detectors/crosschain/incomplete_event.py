@@ -207,7 +207,7 @@ contract C {
             incomplete_send_events = self._detect_incomplete_event(contract, self.CROSSCHAINSENDSIGLIST,
                                                                    self.CROSSCHAINSENDEVENTLIST)
             for (function, node) in incomplete_send_events:
-                info: DETECTOR_INFO = ["Incomplete event ", function, "\n"]
+                info: DETECTOR_INFO = ["An incomplete event was emitted in ", function, "\n"]
                 info += ["\t- ", node, " \n"]
                 res = self.generate_result(info)
                 results.append(res)
