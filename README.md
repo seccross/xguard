@@ -3,7 +3,7 @@
 ## How to install
 
 > **Note** <br />
-> Slither requires Python 3.8+.
+> Xguard requires Python 3.8+.
 If you're **not** going to use one of the [supported compilation frameworks](https://github.com/crytic/crytic-compile), you need [solc](https://github.com/ethereum/solidity/), the Solidity compiler; we recommend using [solc-select](https://github.com/crytic/solc-select) to conveniently switch between solc versions.
 
 ```bash
