@@ -44,7 +44,12 @@ class IncompleteEvent(AbstractDetector):
     IMPACT = DetectorClassification.HIGH
     CONFIDENCE = DetectorClassification.HIGH
 
-    CROSSCHAINSENDSIGLIST, CROSSCHAINRECEIVESIGLIST, CROSSCHAINSENDEVENTLIST, CROSSCHAINRECEIVEEVENTLIST = get_args()
+    # CROSSCHAINSENDSIGLIST, CROSSCHAINRECEIVESIGLIST, CROSSCHAINSENDEVENTLIST, CROSSCHAINRECEIVEEVENTLIST = get_args()
+    CROSSCHAINSENDSIGLIST = ["deposit(uint8,bytes32,bytes)", "depositETH(uint8,bytes32,bytes)"]
+    CROSSCHAINRECEIVESIGLIST = ["executeProposal(uint8,uint64,bytes,bytes32)"]
+    CROSSCHAINSENDEVENTLIST = ["Deposit"]
+# crosschainsendstroagename
+    CROSSCHAINRECEIVEEVENTLIST = ["balanceOf"]
 
     WIKI = "https://github.com/liyue-cs/CrosschainSniffer"
     WIKI_TITLE = "Crosschain message might be reconstructed by event parser"
@@ -117,6 +122,7 @@ contract C {
                         if isinstance(ir, (HighLevelCall, LowLevelCall, LibraryCall, Transfer, Send)):
                             if isinstance(ir, (HighLevelCall)):
                                 if isinstance(ir.function, Function):
+                                    ex = str(ir.expression.called)
                                     if ir.function.full_name in ["transferFrom(address,address,uint256)" ]:
                                         if dominator not in transfer_functions:
                                             eventSendNodeList[eventNode]["sourceToken"] = ir.destination

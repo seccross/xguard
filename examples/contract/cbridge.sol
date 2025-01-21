@@ -3,10 +3,6 @@
 pragma solidity >=0.8.0 <0.9.0;
 pragma abicoder v2;
 
-// SPDX-License-Identifier: MIT
-
-pragma solidity ^0.8.0;
-
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
  */
@@ -81,14 +77,6 @@ interface IERC20 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-
-// SPDX-License-Identifier: MIT
-
-pragma solidity ^0.8.0;
-
-import "../IERC20.sol";
-import "../../../utils/Address.sol";
-
 /**
  * @title SafeERC20
  * @dev Wrappers around ERC20 operations that throw on failure (when the token
@@ -159,10 +147,6 @@ library SafeERC20 {
         }
     }
 }
-
-// SPDX-License-Identifier: MIT
-
-pragma solidity ^0.8.0;
 
 /**
  * @dev Collection of functions related to the address type

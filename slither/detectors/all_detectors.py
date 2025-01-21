@@ -4,6 +4,8 @@ from .crosschain.htlc_crosschain_asset_refund import HTLCCrosschainAssetRefund
 from .crosschain.incomplete_event import IncompleteEvent
 from .crosschain.incorrect_event import IncorrectEvent
 from .crosschain.missing_crosschain_data_check import MissingCrosschainCheck
+from .crosschain.incomplete_htlc import IncompleteHtlc
+from .crosschain.external_inputs import ExternalInputs
 
 from .examples.backdoor import Backdoor
 from .variables.uninitialized_state_variables import UninitializedStateVarsDetection
