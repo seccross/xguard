@@ -6,6 +6,7 @@ from .crosschain.incorrect_event import IncorrectEvent
 from .crosschain.missing_crosschain_data_check import MissingCrosschainCheck
 from .crosschain.incomplete_htlc import IncompleteHtlc
 from .crosschain.external_inputs import ExternalInputs
+from .crosschain.oracle_check import OracleCheck
 
 from .examples.backdoor import Backdoor
 from .variables.uninitialized_state_variables import UninitializedStateVarsDetection
