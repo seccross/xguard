@@ -48,10 +48,6 @@ class IncompleteHtlc(AbstractDetector):
     REFUND_SIGS = ["refund(bytes32)"]
     CLAIM_SIGS = ["confirm(bytes32,bytes32)"]
 
-    TIMELOCKANDHASHLOCKRELATEDSTATE = ["timelock", "transfers"]
-
-
-
     WIKI = "https://github.com/liyue-cs/CrosschainSniffer"
     WIKI_TITLE = "Crosschain message might be reconstructed by event parser"
     WIKI_DESCRIPTION = "Crosschain message might be reconstructed by event parser"

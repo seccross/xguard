@@ -44,10 +44,10 @@ class OracleCheck(AbstractDetector):
     IMPACT = DetectorClassification.HIGH
     CONFIDENCE = DetectorClassification.HIGH
 
-    CROSSCHAINSENDSIGLIST, CROSSCHAINRECEIVESIGLIST, CROSSCHAINSENDEVENTLIST, CROSSCHAINRECEIVEEVENTLIST = get_args()
+    SEND_FUNS, RECEIVE_FUNS, CROSSCHAINSENDEVENTLIST, CROSSCHAINRECEIVEEVENTLIST = get_args()
 
-    SEND_FUNS = ["transferOut(address,address,uint256,bytes32,uint64,uint64,address)"]
-    RECEIVE_FUNS = ["transferIn(address,address,uint256,bytes32,uint64,uint64,bytes32)","depositNFT"]
+    # SEND_FUNS = ["transferOut(address,address,uint256,bytes32,uint64,uint64,address)"]
+    # RECEIVE_FUNS = ["transferIn(address,address,uint256,bytes32,uint64,uint64,bytes32)","depositNFT"]
 
     WIKI = "https://github.com/liyue-cs/CrosschainSniffer"
     WIKI_TITLE = "Crosschain message might be reconstructed by event parser"

@@ -44,12 +44,12 @@ class IncompleteEvent(AbstractDetector):
     IMPACT = DetectorClassification.HIGH
     CONFIDENCE = DetectorClassification.HIGH
 
-    # CROSSCHAINSENDSIGLIST, CROSSCHAINRECEIVESIGLIST, CROSSCHAINSENDEVENTLIST, CROSSCHAINRECEIVEEVENTLIST = get_args()
-    CROSSCHAINSENDSIGLIST = ["deposit(uint8,bytes32,bytes)", "depositETH(uint8,bytes32,bytes)"]
-    CROSSCHAINRECEIVESIGLIST = ["executeProposal(uint8,uint64,bytes,bytes32)"]
-    CROSSCHAINSENDEVENTLIST = ["Deposit"]
-# crosschainsendstroagename
-    CROSSCHAINRECEIVEEVENTLIST = ["balanceOf"]
+    CROSSCHAINSENDSIGLIST, CROSSCHAINRECEIVESIGLIST, CROSSCHAINSENDEVENTLIST, CROSSCHAINRECEIVEEVENTLIST = get_args()
+#     CROSSCHAINSENDSIGLIST = ["deposit(uint8,bytes32,bytes)", "depositETH(uint8,bytes32,bytes)"]
+#     CROSSCHAINRECEIVESIGLIST = ["executeProposal(uint8,uint64,bytes,bytes32)"]
+#     CROSSCHAINSENDEVENTLIST = ["Deposit"]
+# # crosschainsendstroagename
+#     CROSSCHAINRECEIVEEVENTLIST = ["balanceOf"]
 
     WIKI = "https://github.com/liyue-cs/CrosschainSniffer"
     WIKI_TITLE = "Crosschain message might be reconstructed by event parser"

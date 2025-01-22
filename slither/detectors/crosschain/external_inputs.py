@@ -44,9 +44,9 @@ class ExternalInputs(AbstractDetector):
     IMPACT = DetectorClassification.HIGH
     CONFIDENCE = DetectorClassification.HIGH
 
-    CROSSCHAINSENDSIGLIST, CROSSCHAINRECEIVESIGLIST, CROSSCHAINSENDEVENTLIST, CROSSCHAINRECEIVEEVENTLIST = get_args()
-    SEND_FUNS = ["transferOut(address,address,uint256,bytes32,uint64,uint64,address)"]
-    RECEIVE_EVNTS = ["LogNewTransferIn"]
+    SEND_FUNS, CROSSCHAINRECEIVESIGLIST, CROSSCHAINSENDEVENTLIST, RECEIVE_EVNTS = get_args()
+    # SEND_FUNS = ["transferOut(address,address,uint256,bytes32,uint64,uint64,address)"]
+    # RECEIVE_EVNTS = ["LogNewTransferIn"]
 
     WIKI = "https://github.com/liyue-cs/CrosschainSniffer"
     WIKI_TITLE = "Crosschain message might be reconstructed by event parser"
@@ -127,7 +127,6 @@ class ExternalInputs(AbstractDetector):
         # Check derived contracts for missing events
         results = []
 
-        CROSSCHAINSIGLIST = self.CROSSCHAINRECEIVESIGLIST + self.CROSSCHAINSENDSIGLIST
         for contract in self.compilation_unit.contracts_derived:
             htlc_crosschain_asset_refunds = self._detect_external_inputs(contract, self.RECEIVE_EVNTS, self.SEND_FUNS)
             if len(htlc_crosschain_asset_refunds):
